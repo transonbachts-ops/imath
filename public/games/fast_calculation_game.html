@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Game Đại Số: Tính Nhẩm Siêu Tốc</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --accent: #8b5cf6;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        #game-container {
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .header { display: flex; justify-content: space-between; margin-bottom: 40px; }
+
+        .stat { background: rgba(0,0,0,0.3); padding: 10px 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+        .label { font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .value { font-size: 24px; font-weight: 900; }
+
+        #equation {
+            font-size: 80px;
+            font-weight: 900;
+            margin: 40px 0;
+            text-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+            background: linear-gradient(to right, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #input-container {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        #answer-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            width: 100%;
+            padding: 20px;
+            font-size: 40px;
+            color: white;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #answer-input:focus {
+            border-color: var(--accent);
+            background: rgba(139, 92, 246, 0.1);
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.2);
+        }
+
+        .progress-bar-container {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        #progress-bar {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(to right, #8b5cf6, #ec4899);
+            transition: width 0.1s linear;
+        }
+
+        /* Modal Overlay */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.5s;
+        }
+
+        .overlay.visible { opacity: 1; pointer-events: auto; }
+
+        .modal {
+            background: #1e293b;
+            padding: 50px;
+            border-radius: 40px;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal h2 { font-size: 32px; margin-bottom: 10px; }
+        .final-score { font-size: 70px; font-weight: 900; color: var(--accent); margin: 20px 0; }
+        
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover { transform: translateY(-3px); }
+
+        /* Animations */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        .wrong { animation: shake 0.2s ease-in-out; border-color: var(--secondary) !important; color: var(--secondary) !important; }
+
+        .api-msg { margin-top: 20px; font-size: 13px; color: #64748b; }
+
+        /* Start Modal */
+        #start-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            transition: 0.5s;
+        }
+        #start-overlay.hidden { opacity: 0; pointer-events: none; }
+        .rules-modal {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 40px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+        }
+        .rule-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+            text-align: left;
+            background: rgba(255,255,255,0.03);
+            padding: 15px;
+            border-radius: 20px;
+        }
+        .btn-start-game {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            font-size: 20px;
+            font-weight: 800;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Start Screen -->
+    <div id="start-overlay">
+        <div class="rules-modal">
+            <div style="font-size: 50px; margin-bottom: 10px;">⚡</div>
+            <h2 style="font-size: 32px; margin-bottom: 20px; color: #fff;">Luật Chơi</h2>
+            
+            <div class="rule-item">
+                <div style="font-size: 24px;">🧮</div>
+                <div style="font-size: 15px; color: #cbd5e1;"><b>Tính nhẩm</b> phép tính hiện trên màn hình nhanh nhất có thể.</div>
+            </div>
+            <div class="rule-item">
+                <div style="font-size: 24px;">⌨️</div>
+                <div style="font-size: 15px; color: #cbd5e1;"><b>Gõ kết quả</b> và nhấn phím <b>Enter</b> để gửi câu trả lời.</div>
+            </div>
+            <div class="rule-item" style="margin-bottom: 30px;">
+                <div style="font-size: 24px;">🔥</div>
+                <div style="font-size: 15px; color: #cbd5e1;">Mỗi câu trả lời đúng giúp bạn ghi điểm. Phải hoàn thành <b>10 câu</b> liên tiếp!</div>
+            </div>
+
+            <div id="leaderboard-container" style="background: rgba(0,0,0,0.2); border-radius: 15px; padding: 15px; margin-bottom: 20px; display: none;">
+                <h4 style="color: #facc15; margin-bottom: 10px; font-size: 16px;">🏆 Bảng Xếp Hạng</h4>
+                <div id="leaderboard-list" style="max-height: 120px; overflow-y: auto; text-align: left; font-size: 13px;">
+                    <!-- Leaderboard items -->
+                </div>
+            </div>
+
+            <button class="btn-start-game" onclick="startGame()">BẮT ĐẦU CHƠI</button>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <div class="header">
+            <div class="stat">
+                <div class="label">Điểm số</div>
+                <div class="value" id="score">0</div>
+            </div>
+            <div class="stat">
+                <div class="label">Câu số</div>
+                <div class="value" id="count">1/10</div>
+            </div>
+        </div>
+
+        <div id="equation">? + ?</div>
+        
+        <div id="input-container">
+            <input type="number" id="answer-input" placeholder="..." autofocus autocomplete="off">
+        </div>
+
+        <div class="progress-bar-container">
+            <div id="progress-bar"></div>
+        </div>
+        <div style="font-size: 12px; color: #64748b;">Gõ số và nhấn Enter để trả lời</div>
+    </div>
+
+    <div class="overlay" id="finish-overlay">
+        <div class="modal">
+            <h2 id="modal-status">Hết Giờ!</h2>
+            <p style="color: #94a3b8;">Bạn đã ghi được</p>
+            <div class="final-score" id="final-score">0</div>
+            <button onclick="location.reload()">Chơi Lại</button>
+            <div class="api-msg" id="api-status" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        let currentLevel = 1;
+        const totalLevels = 10;
+        let correctAnswer = 0;
+        let timeLeft = 100; // percent
+        let timer = null;
+        let isGameOver = false;
+
+        const equationEl = document.getElementById('equation');
+        const inputEl = document.getElementById('answer-input');
+        const scoreEl = document.getElementById('score');
+        const countEl = document.getElementById('count');
+        const progressBar = document.getElementById('progress-bar');
+        const overlay = document.getElementById('finish-overlay');
+        const apiStatus = document.getElementById('api-status');
+
+        function generateEquation() {
+            const range = currentLevel + 5;
+            const a = Math.floor(Math.random() * range) + 1;
+            const b = Math.floor(Math.random() * range) + 1;
+            const ops = ['+', '-', '*'];
+            const op = ops[Math.floor(Math.random() * (currentLevel > 5 ? 3 : 2))];
+
+            if (op === '+') {
+                correctAnswer = a + b;
+                equationEl.innerText = `${a} + ${b}`;
+            } else if (op === '-') {
+                if (a < b) { // keep positive for basic math
+                    correctAnswer = b - a;
+                    equationEl.innerText = `${b} - ${a}`;
+                } else {
+                    correctAnswer = a - b;
+                    equationEl.innerText = `${a} - ${b}`;
+                }
+            } else {
+                correctAnswer = a * b;
+                equationEl.innerText = `${a} × ${b}`;
+            }
+            
+            timeLeft = 100;
+            if (!isGameOver && timerStarted) resetTimer();
+        }
+
+        let timerStarted = false;
+        function startGame() {
+            document.getElementById('start-overlay').classList.add('hidden');
+            timerStarted = true;
+            inputEl.focus();
+            resetTimer();
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            // Speed up timer each level
+            const speed = Math.max(0.1, 0.4 - (currentLevel * 0.03));
+            timer = setInterval(() => {
+                if(isGameOver) return;
+                timeLeft -= speed;
+                progressBar.style.width = timeLeft + '%';
+                if (timeLeft <= 0) {
+                    endGame('Hết Giờ!');
+                }
+            }, 50);
+        }
+
+        inputEl.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                const val = parseInt(inputEl.value);
+                if (val === correctAnswer) {
+                    score += Math.ceil(timeLeft / 10) * 10;
+                    scoreEl.innerText = score;
+                    inputEl.value = '';
+                    currentLevel++;
+                    if (currentLevel > totalLevels) {
+                        endGame('Chiến Thắng!');
+                    } else {
+                        countEl.innerText = `${currentLevel}/10`;
+                        generateEquation();
+                    }
+                } else {
+                    inputEl.classList.add('wrong');
+                    setTimeout(() => inputEl.classList.remove('wrong'), 300);
+                    inputEl.value = '';
+                }
+            }
+        });
+
+        async function endGame(status) {
+            isGameOver = true;
+            clearInterval(timer);
+            inputEl.blur();
+            document.getElementById('modal-status').innerText = status;
+            document.getElementById('final-score').innerText = score;
+            overlay.classList.add('visible');
+            await submitToBackend(score);
+        }
+
+        async function submitToBackend(finalScore) {
+            const params = new URLSearchParams(window.location.search);
+            const activityId = params.get('activityId');
+            if (!activityId) return;
+
+            try {
+                await fetch('/api/course/scorm/commit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        activityId: parseInt(activityId),
+                        score: finalScore,
+                        status: 'completed',
+                        successStatus: finalScore >= 500 ? 'passed' : 'failed',
+                        isManualComplete: true
+                    })
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function initGameData() {
+            const params = new URLSearchParams(window.location.search);
+            const activityId = params.get('activityId');
+            if (!activityId) return;
+
+            fetch(`/api/course/games/${activityId}/leaderboard`)
+                .then(res => res.json())
+                .then(data => {
+                    const lbData = data.leaderboard;
+                    if (lbData && lbData.length > 0) {
+                        const lbContainer = document.getElementById('leaderboard-container');
+                        const lbList = document.getElementById('leaderboard-list');
+                        lbContainer.style.display = 'block';
+                        lbList.innerHTML = lbData.map(u => `
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <span style="display: flex; align-items: center; gap: 8px; color: #fff;">
+                                    <b>#${u.rank}</b>
+                                    <img src="${u.avatar}" style="width:20px; height:20px; border-radius:50%;"/>
+                                    ${u.name}
+                                </span>
+                                <b style="color: #ec4899">${u.score} đ</b>
+                            </div>
+                        `).join('');
+                    }
+                }).catch(e => console.error(e));
+        }
+
+        generateEquation();
+        initGameData();
+        // Don't start timer until startGame is called
+    </script>
+</body>
+</html>

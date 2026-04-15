@@ -1,0 +1,300 @@
+import pool from '@/lib/db';
+import jwt from 'jsonwebtoken';
+import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+
+const GEMINI_API_KEY = 'AIzaSyAjgdesoQDqWN3HMW26l34kXull0SUvEBs';
+const OPENAI_API_KEY = 'sk-9f370baa1366bfe3f73951334c3ecdcada536381c5dbccb1079eb0d8ea14e44d';
+const CLAUDE_API_KEY = 'sk-5c6b297c749b46ad90d9a2ebfd03a18b0ba02613e07d68d87e99ddafa9847dc9';
+const JWT_SECRET = 'supersecret_smart_edu_key_999';
+
+export async function GET(req) {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token');
+    if (!token) return NextResponse.json({ hasAccess: false });
+
+    let decoded;
+    try { decoded = jwt.verify(token.value, JWT_SECRET); } catch (e) { return NextResponse.json({ hasAccess: false }); }
+
+    try { await pool.query('ALTER TABLE users ADD COLUMN can_use_ai BOOLEAN DEFAULT FALSE'); } catch (e) { }
+
+    const [users] = await pool.query('SELECT can_use_ai FROM users WHERE id = ?', [decoded.userId]);
+    return NextResponse.json({ hasAccess: true, canUseAi: users[0]?.can_use_ai });
+  } catch (err) {
+    return NextResponse.json({ hasAccess: false });
+  }
+}
+
+export async function POST(req) {
+  try {
+    try { await pool.query('ALTER TABLE users ADD COLUMN can_use_ai BOOLEAN DEFAULT FALSE'); } catch (e) { }
+
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token');
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token.value, JWT_SECRET);
+    } catch (e) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    }
+
+    const { message, history = [], bot = 'gemini' } = await req.json();
+
+    const [users] = await pool.query('SELECT * FROM users WHERE id = ?', [decoded.userId]);
+    if (users.length === 0) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    const user = users[0];
+    if (!user.can_use_ai) {
+      return NextResponse.json({ error: 'Bạn chưa được cấp quyền sử dụng AI Chatbot.' }, { status: 403 });
+    }
+
+    // Cấp quyền RAG Toàn Diện: Lấy danh sách giới hạn an toàn
+    const [studentsResult] = await pool.query("SELECT full_name, email FROM users WHERE role='student' LIMIT 300");
+    const [teachersResult] = await pool.query("SELECT full_name, email FROM users WHERE role='teacher' LIMIT 100");
+    const [coursesResult] = await pool.query("SELECT c.title, u.full_name as instructor_name FROM courses c LEFT JOIN users u ON c.owner_id = u.id LIMIT 200");
+    let minigamesResult = [];
+    try { const [res] = await pool.query("SELECT title, game_type FROM imath_studio_projects LIMIT 200"); minigamesResult = res; } catch(e) {}
+    let docsResult = [];
+    try { const [res] = await pool.query("SELECT title FROM documents LIMIT 100"); docsResult = res; } catch(e) {}
+
+    const listStudents = studentsResult.map(s => typeof s.full_name === 'string' ? s.full_name : 'No Name').join(', ');
+    const listTeachers = teachersResult.map(t => typeof t.full_name === 'string' ? t.full_name : 'No Name').join(', ');
+    const listCourses = coursesResult.map(c => `${c.title} (GV: ${c.instructor_name || 'Hệ thống'})`).join('; ');
+    const listGames = minigamesResult.map(g => `${g.title} (${g.game_type})`).join('; ');
+    const listDocs = docsResult.map(d => typeof d.title === 'string' ? d.title : 'Doc').join(', ');
+
+    let systemContext = `Bạn là một trợ lý ảo tư vấn học tập thông minh (AI Chatbot) được tích hợp trong nền tảng học Toán trực tuyến iMath. Tên của bạn là iMath AI. 
+Người bạn đang nói chuyện là ${user.full_name} (${user.role === 'student' ? 'Học sinh' : 'Giáo/Nhân viên'}). Hãy trả lời một cách tự nhiên, thân thiện, và xưng hô phù hợp.
+
+# BẢN ĐỒ TRUY XUẤT DỮ LIỆU HỆ THỐNG IMATH (Được cấp quyền RAG TOÀN DIỆN)
+Dưới đây là DỮ LIỆU THẬT đang có trên Website. Hãy dùng thông tin này để trả lời khi người dùng hỏi các câu như "Ai dạy khoá X?", "Hệ thống có game gì?", "Có những học sinh nào?".
+
+1. DATA TỔNG SỐ LƯỢNG:
+- Học sinh: ${studentsResult.length} | Giáo viên: ${teachersResult.length} | Khóa học: ${coursesResult.length} | Trò chơi (Minigame): ${minigamesResult.length} | Tài liệu: ${docsResult.length}
+
+2. DANH SÁCH CHI TIẾT (Trút xuất từ SQL Database):
+- 👨‍🏫 Danh sách Giáo viên/Nhân sự: ${listTeachers}
+- 📚 Danh sách Khóa học đang mở: ${listCourses}
+- 🕹️ Danh sách Game / Học liệu tương tác trong Studio: ${listGames || 'Đang chờ giáo viên tạo mới'}
+- 📄 Kho tài liệu / Ấn phẩm: ${listDocs || 'Đang chờ upload'}
+- 👩‍🎓 Danh sách Học sinh / Học viên: ${listStudents}
+
+`;
+
+    if (user.role === 'student') {
+      const [enrollments] = await pool.query(`
+        SELECT c.title, e.status, e.created_at
+        FROM enrollments e
+        JOIN courses c ON e.course_id = c.id
+        WHERE e.user_id = ?
+      `, [user.id]);
+
+      const [quizResults] = await pool.query(`
+        SELECT qr.score, qr.details_json, c.title as course_title, qr.quiz_id, qr.submitted_at
+        FROM quiz_results qr
+        JOIN quizzes q ON qr.quiz_id = q.id
+        JOIN course_activities a ON q.activity_id = a.id
+        JOIN course_modules cm ON a.module_id = cm.id
+        JOIN courses c ON cm.course_id = c.id
+        WHERE qr.student_id = ?
+        ORDER BY qr.submitted_at DESC
+        LIMIT 5
+      `, [user.id]);
+
+      systemContext += `Đây là dữ liệu học tập của học sinh này trên hệ thống:\n`;
+      systemContext += `- Khóa học đang tham gia: ${enrollments.map(e => e.title).join(', ') || 'Chưa tham gia khóa nào'}\n`;
+
+      if (quizResults.length > 0) {
+        systemContext += `- Kết quả 5 bài thi gần nhất:\n`;
+        for (const res of quizResults) {
+          systemContext += `  + Khóa: ${res.course_title} | Điểm: ${res.score}/10 | Ngày: ${new Date(res.submitted_at).toLocaleDateString('vi-VN')}\n`;
+
+          if (res.details_json) {
+            try {
+              const details = JSON.parse(res.details_json);
+              const wrongIds = Object.keys(details).filter(id => !details[id].isCorrect);
+              if (wrongIds.length > 0) {
+                const [questions] = await pool.query('SELECT id, question_text, options_json, correct_answer FROM quiz_questions WHERE id IN (?)', [wrongIds]);
+                systemContext += `    Chi tiết các câu sai trong bài này:\n`;
+                questions.forEach(q => {
+                  const d = details[q.id];
+                  systemContext += `    * Câu hỏi: "${q.question_text}"\n`;
+                  systemContext += `      - Học sinh chọn: ${d.studentAnswer || 'N/A'}\n`;
+                  systemContext += `      - Đáp án đúng: ${q.correct_answer}\n`;
+                  systemContext += `      - Dạng toán (Tag): ${d.tag || 'Chưa phân loại'}\n`;
+                });
+              }
+            } catch (e) { }
+          }
+        }
+      }
+      systemContext += `\nHãy sử dụng thông tin CHI TIẾT CÁC CÂU SAI trên để tư vấn lộ trình học tập.`;
+    } else {
+      const [avgScores] = await pool.query("SELECT AVG(score) as avgScore FROM quiz_results");
+
+      let courseFilter = "1=1";
+      const params = [];
+      if (user.role === 'teacher') {
+        courseFilter = "c.owner_id = ?";
+        params.push(user.id);
+      }
+
+      // Tiến độ hoàn thành từng học sinh / từng khóa (CORE DATA)
+      const [progressRows] = await pool.query(`
+        SELECT 
+          u.full_name as student_name,
+          c.title as course_title,
+          COUNT(DISTINCT sp.activity_id) as completed,
+          (SELECT COUNT(*) FROM course_activities ca 
+           JOIN course_modules cm2 ON ca.module_id = cm2.id 
+           WHERE cm2.course_id = c.id) as total
+        FROM enrollments e
+        JOIN users u ON e.user_id = u.id
+        JOIN courses c ON e.course_id = c.id
+        LEFT JOIN student_progress sp ON sp.student_id = u.id
+          AND sp.activity_id IN (
+            SELECT ca.id FROM course_activities ca
+            JOIN course_modules cm ON ca.module_id = cm.id
+            WHERE cm.course_id = c.id
+          )
+        WHERE ${courseFilter}
+        GROUP BY u.id, c.id
+        ORDER BY u.full_name, c.title
+      `, params);
+
+      // Điểm thi của từng học sinh
+      const [allScores] = await pool.query(`
+        SELECT u.full_name as student_name, ca.title as quiz_title,
+          ROUND(CASE WHEN qr.score > 100 THEN qr.score/100 WHEN qr.score > 10 THEN qr.score/10 ELSE qr.score END, 1) as score,
+          DATE(qr.submitted_at) as date
+        FROM quiz_results qr
+        JOIN users u ON qr.student_id = u.id
+        JOIN quizzes q ON qr.quiz_id = q.id
+        JOIN course_activities ca ON q.activity_id = ca.id
+        JOIN course_modules cm ON ca.module_id = cm.id
+        JOIN courses c ON cm.course_id = c.id
+        WHERE ${courseFilter}
+        ORDER BY qr.submitted_at DESC LIMIT 100
+      `, params);
+
+      systemContext += `\n📊 THỐNG KÊ CHI TIẾT (Dành cho Giáo viên/Quản trị):\n`;
+      systemContext += `- Điểm TB toàn hệ thống: ${avgScores[0].avgScore ? Number(avgScores[0].avgScore).toFixed(2) : 0}/10\n`;
+
+      // Phân tích tiến độ: ai chưa hoàn thành
+      if (progressRows.length > 0) {
+        systemContext += `\n📋 TIẾN ĐỘ HỌC TẬP (Hoàn thành bài/Tổng bài):\n`;
+        const incomplete = progressRows.filter(r => r.total > 0 && r.completed < r.total);
+        const complete   = progressRows.filter(r => r.total > 0 && r.completed >= r.total);
+        const notStarted = progressRows.filter(r => r.completed === 0);
+
+        systemContext += `- Học sinh CHƯA hoàn thành khóa học: ${incomplete.length} trường hợp\n`;
+        systemContext += `- Học sinh ĐÃ hoàn thành: ${complete.length} trường hợp\n`;
+        systemContext += `- Chưa bắt đầu học (0 bài): ${notStarted.length} trường hợp\n`;
+
+        systemContext += `\nChi tiết từng học sinh:\n`;
+        for (const r of progressRows) {
+          const pct = r.total > 0 ? Math.round((r.completed / r.total) * 100) : 0;
+          const status = r.completed >= r.total && r.total > 0 ? '✅ Hoàn thành' : `⏳ ${pct}%`;
+          systemContext += `- ${r.student_name} | "${r.course_title}": ${r.completed}/${r.total} bài — ${status}\n`;
+        }
+      }
+
+      if (allScores.length > 0) {
+        systemContext += `\n🎯 ĐIỂM THI GẦN ĐÂY:\n`;
+        for (const s of allScores.slice(0, 30)) {
+          systemContext += `- ${s.student_name} | ${s.quiz_title}: ${s.score}/10 (${s.date})\n`;
+        }
+      }
+    }
+
+    // Helper: Safely call proxy và trả về text content, hoặc null nếu lỗi
+    const callProxy = async (apiKey, model, msgs, signal) => {
+      try {
+        const res = await fetch('https://llm.chiasegpu.vn/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+          body: JSON.stringify({ model, messages: msgs }),
+          signal
+        });
+        const text = await res.text(); // Đọc text để tránh crash khi proxy trả HTML
+        if (!res.ok) {
+          console.warn(`Proxy lỗi ${res.status}:`, text.substring(0, 100));
+          return null;
+        }
+        const data = JSON.parse(text); // Có thể lỗi nếu là HTML → null
+        return data?.choices?.[0]?.message?.content || null;
+      } catch (e) {
+        console.warn('Proxy fail, chuyển fallback Gemini:', e.message);
+        return null;
+      }
+    };
+
+    // Helper: Gọi Gemini trực tiếp (không qua proxy, luôn ổn định)
+    const callGemini = async (ctx, hist, msg, signal) => {
+      const geminiModels = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
+      for (const modelName of geminiModels) {
+        try {
+          const contents = [
+            { role: 'user', parts: [{ text: ctx }] },
+            { role: 'model', parts: [{ text: 'Đã rõ.' }] },
+            ...hist.map(m => ({ role: m.role === 'user' ? 'user' : 'model', parts: [{ text: m.text || m.content || '' }] })),
+            { role: 'user', parts: [{ text: msg }] }
+          ];
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents }),
+            signal
+          });
+          const data = await res.json();
+          if (res.ok && data.candidates) return data.candidates[0].content.parts[0].text;
+        } catch (e) { if (e.name === 'AbortError') throw e; continue; }
+      }
+      return null;
+    };
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 120000); // 120s timeout
+
+    let aiText = '';
+    let usedFallback = false;
+    try {
+      const msgs = [
+        { role: 'system', content: systemContext },
+        ...history.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text || m.content || '' })),
+        { role: 'user', content: message }
+      ];
+
+      if (bot === 'openai') {
+        aiText = await callProxy(OPENAI_API_KEY, 'llama3.2:3b', msgs, controller.signal);
+        if (!aiText) { usedFallback = true; aiText = await callGemini(systemContext, history, message, controller.signal); }
+      } else if (bot === 'claude') {
+        aiText = await callProxy(CLAUDE_API_KEY, 'claude-sonnet-4.6', msgs, controller.signal);
+        if (!aiText) { usedFallback = true; aiText = await callGemini(systemContext, history, message, controller.signal); }
+      } else {
+        aiText = await callGemini(systemContext, history, message, controller.signal);
+      }
+
+      if (!aiText) aiText = 'Dịch vụ AI đang bận, vui lòng thử lại sau.';
+      if (usedFallback) aiText += `\n\n*(Lưu ý: Mô hình ${bot === 'openai' ? 'GPT/Llama' : 'Claude'} tạm thời không khả dụng. Phản hồi bởi Gemini.)*`;
+
+      return NextResponse.json({ reply: aiText });
+    } catch (error) {
+      if (error.name === 'AbortError') return NextResponse.json({ error: 'Quá thời gian xử lý.' }, { status: 504 });
+      console.error(error);
+      return NextResponse.json({ error: 'Lỗi AI.' }, { status: 500 });
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: 'Lỗi hệ thống.' }, { status: 500 });
+  }
+}

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sắp Xếp Bước Giải - iMath Studio</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+        body { background: radial-gradient(circle at bottom left, #0c2340, #0f172a); color: #fff; min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body::before { content: ''; position: fixed; inset: 0; background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.04) 1px, transparent 0); background-size: 40px 40px; z-index: 0; pointer-events: none; }
+
+        .top-nav { position: relative; z-index: 5000; display: flex; justify-content: space-between; align-items: center; padding: 18px 30px; background: rgba(15,23,42,0.7); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .game-stats { display: flex; gap: 30px; }
+        .stat-item { text-align: center; }
+        .stat-val { font-size: 22px; font-weight: 900; color: #34d399; line-height: 1; }
+        .stat-lbl { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; margin-top: 4px; }
+
+        .game-area { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; gap: 20px; overflow-y: auto; }
+
+        .problem-title { font-size: clamp(14px,2vw,18px); color: #94a3b8; text-align: center; max-width: 700px; padding: 12px 20px; background: rgba(52,211,153,0.08); border-radius: 12px; border-left: 3px solid #34d399; font-weight: 600; }
+
+        .columns-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 900px; width: 100%; }
+        .col-box { background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.12); border-radius: 20px; padding: 18px; min-height: 300px; }
+        .col-title { font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 14px; }
+
+        .step-item {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: #e2e8f0; padding: 14px 18px; border-radius: 14px; cursor: grab;
+            font-size: 15px; font-weight: 600; margin-bottom: 10px; line-height: 1.5;
+            display: flex; align-items: center; gap: 12px; transition: all 0.2s;
+            user-select: none;
+        }
+        .step-item:hover { background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.3); transform: translateX(4px); }
+        .step-item.dragging { opacity: 0.4; border-style: dashed; }
+        .step-item.drag-over { background: rgba(52,211,153,0.15); border-color: #34d399; }
+        .step-number { min-width: 28px; height: 28px; border-radius: 8px; background: rgba(52,211,153,0.15); color: #34d399; font-size: 12px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+        .step-correct { border-color: #10b981 !important; background: rgba(16,185,129,0.12) !important; }
+        .step-wrong   { border-color: #ef4444 !important; background: rgba(239,68,68,0.12) !important; }
+
+        .check-btn { background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 14px 40px; font-size: 18px; font-weight: 900; border-radius: 18px; cursor: pointer; box-shadow: 0 10px 25px rgba(16,185,129,0.3); transition: 0.2s; }
+        .check-btn:hover { transform: scale(1.04); }
+        .check-btn:disabled { opacity: 0.4; cursor: default; transform: none; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; inset: 0; background: rgba(10,15,30,0.97); display: flex; justify-content: center; align-items: center; z-index: 2000; }
+        .overlay.hidden { display: none; }
+        .menu-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 40px; border-radius: 36px; max-width: 520px; width: 90%; text-align: center; }
+        .tabs { display: flex; background: rgba(0,0,0,0.4); padding: 5px; border-radius: 18px; margin-bottom: 28px; }
+        .tab { flex: 1; padding: 11px; border-radius: 14px; cursor: pointer; font-weight: 700; font-size: 14px; color: #64748b; transition: 0.2s; }
+        .tab.active { background: #fff; color: #0f172a; }
+        .tab-content { display: none; min-height: 220px; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .play-btn { background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 18px 40px; font-size: 22px; font-weight: 900; border-radius: 22px; cursor: pointer; box-shadow: 0 12px 30px rgba(16,185,129,0.4); width: 100%; margin-top: 20px; transition: 0.3s; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); } 70% { box-shadow: 0 0 0 18px rgba(16,185,129,0); } }
+        .lb-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: rgba(255,255,255,0.03); margin-bottom: 7px; border-radius: 12px; }
+        .lb-rank { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 12px; }
+        .rank-1 { background: #facc15; color: #78350f; } .rank-2 { background: #cbd5e1; color: #1e293b; } .rank-3 { background: #fb923c; color: #7c2d12; }
+        #loader { position: fixed; inset: 0; background: #0f172a; display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid #34d399; border-radius: 50%; width: 44px; height: 44px; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+<div id="loader"><div class="spinner"></div></div>
+
+<nav class="top-nav" style="position:relative;z-index:5000;">
+    <div style="display:flex;align-items:center;gap:10px;">
+        <div style="font-size:22px;">🔀</div>
+        <span style="font-weight:900;font-size:16px;">Sắp Xếp Bước Giải</span>
+    </div>
+    <div class="game-stats">
+        <div class="stat-item">
+            <div class="stat-val" id="score-disp">0</div>
+            <div class="stat-lbl">Điểm</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-val" id="round-disp">1/1</div>
+            <div class="stat-lbl">Bài Toán</div>
+        </div>
+    </div>
+</nav>
+
+<div class="game-area" id="game-area" style="display:none;">
+    <div class="problem-title" id="problem-title">Sắp xếp các bước sau theo thứ tự giải toán đúng:</div>
+    <div style="font-size:13px;color:#64748b;text-align:center;">Kéo thả các bước từ cột TRÁI sang cột PHẢI theo đúng thứ tự</div>
+    <div class="columns-wrapper">
+        <div class="col-box" id="pool-col" ondragover="allowDrop(event)" ondrop="dropToPool(event)">
+            <div class="col-title">📦 Các bước (chưa sắp xếp)</div>
+        </div>
+        <div class="col-box" id="answer-col" ondragover="allowDrop(event)" ondrop="dropToAnswer(event)">
+            <div class="col-title">✍️ Thứ tự của bạn</div>
+        </div>
+    </div>
+    <button class="check-btn" onclick="checkOrder()" id="check-btn">Kiểm tra thứ tự ✓</button>
+</div>
+
+<!-- MENU -->
+<div class="overlay" id="menu-overlay">
+    <div class="menu-card">
+        <h1 style="font-size:28px;font-weight:900;margin-bottom:25px;background:linear-gradient(to right,#34d399,#38bdf8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">🔀 Sắp Xếp Bước Giải</h1>
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('play')">Chơi Ngay</div>
+            <div class="tab" onclick="switchTab('guide')">Hướng Dẫn</div>
+            <div class="tab" onclick="switchTab('leaderboard')">Xếp Hạng</div>
+        </div>
+        <div class="tab-content active" id="tab-play">
+            <p style="color:#94a3b8;margin-top:30px;">Sắp xếp các bước giải toán theo đúng logic!</p>
+            <button class="play-btn" onclick="startGame()">BẮT ĐẦU</button>
+        </div>
+        <div class="tab-content" id="tab-guide">
+            <div style="text-align:left;background:rgba(0,0,0,0.25);padding:22px;border-radius:18px;margin-top:10px;line-height:1.7;color:#cbd5e1;font-size:14px;">
+                <p style="mb:10px;">🔢 Bạn sẽ thấy một bài toán và các bước giải bị <b>xáo trộn</b>.</p>
+                <p style="mb:10px;">🖱️ <b>Kéo thả</b> từng bước từ cột trái sang cột phải theo đúng thứ tự.</p>
+                <p style="mb:10px;">✓ Nhấn <b>Kiểm tra</b> để xem kết quả — màu xanh là đúng, đỏ là sai.</p>
+                <p>🏆 Sắp xếp đúng hết tất cả các bước để đạt điểm tối đa!</p>
+            </div>
+            <button class="play-btn" onclick="switchTab('play')" style="margin-top:16px;font-size:16px;padding:14px;">Hiểu rồi!</button>
+        </div>
+        <div class="tab-content" id="tab-leaderboard">
+            <div id="lb-container" style="margin-top:10px;max-height:240px;overflow-y:auto;"><p style="color:#64748b;padding-top:40px;">Đang tải...</p></div>
+            <button class="play-btn" onclick="switchTab('play')" style="font-size:15px;padding:12px;margin-top:12px;">Quay về</button>
+        </div>
+    </div>
+</div>
+
+<!-- WIN -->
+<div class="overlay hidden" id="win-overlay">
+    <div class="menu-card">
+        <div style="font-size:56px;margin-bottom:16px;">🎓</div>
+        <h2 style="font-size:30px;font-weight:900;margin-bottom:8px;">Hoàn thành!</h2>
+        <div style="display:flex;gap:16px;justify-content:center;margin:24px 0;">
+            <div style="background:rgba(255,255,255,0.05);padding:16px 20px;border-radius:18px;">
+                <div style="font-size:10px;color:#64748b;font-weight:700;">ĐIỂM SỐ</div>
+                <div style="font-size:28px;font-weight:900;color:#34d399;" id="final-score">0</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.05);padding:16px 20px;border-radius:18px;">
+                <div style="font-size:10px;color:#64748b;font-weight:700;">BƯỚC ĐÚNG</div>
+                <div style="font-size:28px;font-weight:900;color:#38bdf8;" id="final-correct">0</div>
+            </div>
+        </div>
+        <button class="play-btn" onclick="location.reload()">CHƠI LẠI</button>
+        <div onclick="handleExit()" style="margin-top:16px;color:#64748b;cursor:pointer;font-weight:700;">Thoát ra</div>
+    </div>
+</div>
+
+<script>
+    let problems = [];
+    let currentProblem = 0;
+    let score = 0;
+    let totalCorrectSteps = 0;
+    let dragging = null;
+
+    function handleExit() {
+        if (window.history.length > 1) window.history.back();
+        else if (window.opener) window.close();
+        else window.location.href = '/dashboard';
+    }
+
+    function switchTab(id) {
+        const tabs = ['play','guide','leaderboard'];
+        document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', tabs[i] === id));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById(`tab-${id}`).classList.add('active');
+    }
+
+    async function init() {
+        const params = new URLSearchParams(window.location.search);
+        const activityId = params.get('activityId');
+        if (!activityId) { showError('Không tìm thấy hoạt động!'); return; }
+        try {
+            const actRes = await fetch(`/api/course/activities/${activityId}`);
+            if (!actRes.ok) throw new Error('Không thể tải bài học');
+            const actData = await actRes.json();
+            const stRes = await fetch(`/api/studio/play?code=${actData.activity.details}`);
+            const stData = await stRes.json();
+            const cfg = typeof stData.game.config_json === 'string' ? JSON.parse(stData.game.config_json) : stData.game.config_json;
+            problems = cfg.problems || [];
+            if (!problems.length) throw new Error('Game chưa có bài toán nào!');
+            loadLeaderboard(activityId);
+            document.getElementById('loader').style.display = 'none';
+        } catch(e) { showError(e.message); }
+    }
+
+    async function loadLeaderboard(actId) {
+        try {
+            const data = await fetch(`/api/course/games/${actId}/leaderboard`).then(r => r.json());
+            const lb = document.getElementById('lb-container');
+            lb.innerHTML = data.leaderboard?.length > 0
+                ? data.leaderboard.map(u => `<div class="lb-item"><div style="display:flex;align-items:center;gap:10px;"><span class="lb-rank ${u.rank<=3?'rank-'+u.rank:''}">${u.rank}</span><span style="font-weight:700;">${u.name}</span></div><span style="color:#34d399;font-weight:900;">${u.score} đ</span></div>`).join('')
+                : '<p style="color:#64748b;padding-top:40px;">Hãy là người đầu tiên!</p>';
+        } catch(e) {}
+    }
+
+    function startGame() {
+        document.getElementById('menu-overlay').classList.add('hidden');
+        document.getElementById('game-area').style.display = 'flex';
+        renderProblem();
+    }
+
+    function renderProblem() {
+        if (currentProblem >= problems.length) { endGame(); return; }
+        const p = problems[currentProblem];
+        document.getElementById('round-disp').innerText = `${currentProblem+1}/${problems.length}`;
+        document.getElementById('problem-title').innerText = p.title || 'Sắp xếp các bước giải toán theo đúng thứ tự:';
+        document.getElementById('check-btn').disabled = false;
+
+        const shuffled = [...p.steps].sort(() => Math.random() - 0.5);
+        const pool = document.getElementById('pool-col');
+        const answer = document.getElementById('answer-col');
+        pool.innerHTML = '<div class="col-title">📦 Các bước (chưa sắp xếp)</div>';
+        answer.innerHTML = '<div class="col-title">✍️ Thứ tự của bạn</div>';
+        
+        shuffled.forEach((step, i) => {
+            const el = makeStepEl(step, i, false);
+            pool.appendChild(el);
+        });
+    }
+
+    function makeStepEl(text, idx, numbered) {
+        const el = document.createElement('div');
+        el.className = 'step-item';
+        el.draggable = true;
+        el.dataset.text = text;
+        el.innerHTML = `<span class="step-number">${numbered ? idx+1 : '≡'}</span> ${text}`;
+        el.addEventListener('dragstart', e => { dragging = el; setTimeout(() => el.classList.add('dragging'), 0); });
+        el.addEventListener('dragend', () => { el.classList.remove('dragging'); dragging = null; });
+        el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('drag-over'); });
+        el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+        el.addEventListener('drop', e => {
+            e.preventDefault(); el.classList.remove('drag-over');
+            if (dragging && dragging !== el) el.parentNode.insertBefore(dragging, el);
+        });
+        return el;
+    }
+
+    function allowDrop(e) { e.preventDefault(); }
+    function dropToPool(e) { e.preventDefault(); if (dragging) document.getElementById('pool-col').appendChild(dragging); }
+    function dropToAnswer(e) { e.preventDefault(); if (dragging) document.getElementById('answer-col').appendChild(dragging); }
+
+    let mistakes = [];
+
+    function checkOrder() {
+        const p = problems[currentProblem];
+        const answerCol = document.getElementById('answer-col');
+        const userSteps = [...answerCol.querySelectorAll('.step-item')].map(el => el.dataset.text);
+
+        if (userSteps.length === 0) { alert('Bạn cần kéo ít nhất 1 bước vào cột Thứ tự!'); return; }
+
+        document.getElementById('check-btn').disabled = true;
+        let correctHere = 0;
+        userSteps.forEach((step, i) => {
+            const el = answerCol.querySelectorAll('.step-item')[i];
+            if (step === p.steps[i]) { el.classList.add('step-correct'); correctHere++; }
+            else { 
+                el.classList.add('step-wrong'); 
+                mistakes.push({ problem: p.title, expected: p.steps[i], actual: step });
+            }
+        });
+
+        const pts = Math.round((correctHere / p.steps.length) * 200);
+        score += pts;
+        totalCorrectSteps += correctHere;
+        document.getElementById('score-disp').innerText = score;
+
+        setTimeout(() => {
+            currentProblem++;
+            renderProblem();
+        }, 2500);
+    }
+
+    function endGame() {
+        document.getElementById('game-area').style.display = 'none';
+        document.getElementById('final-score').innerText = score;
+        document.getElementById('final-correct').innerText = totalCorrectSteps;
+        document.getElementById('win-overlay').classList.remove('hidden');
+        const actId = new URLSearchParams(window.location.search).get('activityId');
+        fetch('/api/course/scorm/commit', {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ 
+                activityId: parseInt(actId), 
+                score: Math.min(score / 10, 100), 
+                status: 'completed', 
+                successStatus: 'passed', 
+                isManualComplete: true,
+                details: { mistakes }
+            })
+        });
+    }
+
+    function showError(msg) {
+        document.getElementById('loader').innerHTML = `<div style="color:#f87171;text-align:center;padding:40px;max-width:400px"><div style="font-size:40px;margin-bottom:16px">⚠️</div><div>${msg}</div></div>`;
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>

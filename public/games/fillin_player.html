@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Điền Đáp Án - iMath Studio</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+        body { background: radial-gradient(circle at top right, #1a1035, #0f172a); color: #fff; min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body::before { content: ''; position: fixed; inset: 0; background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.04) 1px, transparent 0); background-size: 40px 40px; z-index: 0; pointer-events: none; }
+        
+        .top-nav { position: relative; z-index: 5000; display: flex; justify-content: space-between; align-items: center; padding: 18px 30px; background: rgba(15,23,42,0.7); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .game-stats { display: flex; gap: 30px; }
+        .stat-item { text-align: center; }
+        .stat-val { font-size: 22px; font-weight: 900; color: #a78bfa; line-height: 1; }
+        .stat-lbl { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; margin-top: 4px; }
+
+        .game-area { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; }
+        
+        .problem-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(167,139,250,0.2); border-radius: 28px; padding: 40px; max-width: 700px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+        
+        .q-label { font-size: 11px; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 14px; }
+        .hint-text { font-size: 14px; color: #94a3b8; margin-bottom: 18px; padding: 10px 16px; background: rgba(167,139,250,0.1); border-radius: 10px; border-left: 3px solid #a78bfa; text-align: left; }
+        .problem-expr { font-size: clamp(22px, 4vw, 38px); font-weight: 900; color: #f1f5f9; margin-bottom: 30px; letter-spacing: 1px; min-height: 60px; display: flex; align-items: center; justify-content: center; }
+        
+        .answer-section { display: flex; align-items: center; gap: 14px; justify-content: center; margin-bottom: 24px; }
+        .answer-input {
+            background: rgba(255,255,255,0.06); border: 2px solid rgba(167,139,250,0.3); color: #fff;
+            font-size: 22px; font-weight: 900; padding: 14px 24px; border-radius: 16px; width: 220px;
+            text-align: center; outline: none; transition: 0.2s;
+            font-family: 'Outfit', monospace;
+        }
+        .answer-input:focus { border-color: #a78bfa; box-shadow: 0 0 0 4px rgba(167,139,250,0.2); }
+        .submit-btn { background: linear-gradient(135deg, #a78bfa, #7c3aed); color: #fff; border: none; padding: 14px 28px; border-radius: 16px; font-size: 16px; font-weight: 900; cursor: pointer; transition: 0.2s; }
+        .submit-btn:hover { transform: scale(1.05); }
+        .submit-btn:disabled { opacity: 0.5; cursor: default; }
+
+        /* Quick-entry math buttons */
+        .math-pad { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        .math-key { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 8px 14px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 700; transition: 0.15s; }
+        .math-key:hover { background: rgba(167,139,250,0.2); border-color: #a78bfa; }
+
+        .progress-dots { display: flex; gap: 8px; justify-content: center; margin-top: 22px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.15); transition: 0.3s; }
+        .dot.done { background: #10b981; }
+        .dot.active { background: #a78bfa; transform: scale(1.4); }
+        .dot.wrong { background: #ef4444; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; inset: 0; background: rgba(10,15,30,0.97); display: flex; justify-content: center; align-items: center; z-index: 2000; }
+        .overlay.hidden { display: none; }
+        .menu-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 40px; border-radius: 36px; max-width: 520px; width: 90%; text-align: center; }
+        .tabs { display: flex; background: rgba(0,0,0,0.4); padding: 5px; border-radius: 18px; margin-bottom: 28px; }
+        .tab { flex: 1; padding: 11px; border-radius: 14px; cursor: pointer; font-weight: 700; font-size: 14px; color: #64748b; transition: 0.2s; }
+        .tab.active { background: #fff; color: #0f172a; }
+        .tab-content { display: none; min-height: 220px; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .play-btn { background: linear-gradient(135deg, #a78bfa, #7c3aed); color: #fff; border: none; padding: 18px 40px; font-size: 22px; font-weight: 900; border-radius: 22px; cursor: pointer; box-shadow: 0 12px 30px rgba(124,58,237,0.4); width: 100%; margin-top: 20px; transition: 0.3s; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(124,58,237,0.5); } 70% { box-shadow: 0 0 0 18px rgba(124,58,237,0); } }
+        .lb-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: rgba(255,255,255,0.03); margin-bottom: 7px; border-radius: 12px; }
+        .lb-rank { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 12px; }
+        .rank-1 { background: #facc15; color: #78350f; }
+        .rank-2 { background: #cbd5e1; color: #1e293b; }
+        .rank-3 { background: #fb923c; color: #7c2d12; }
+        #loader { position: fixed; inset: 0; background: #0f172a; display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid #a78bfa; border-radius: 50%; width: 44px; height: 44px; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .shake { animation: shake 0.5s; }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-8px)} 40%,80%{transform:translateX(8px)} }
+        
+        .flash-correct { animation: flashG 0.6s; }
+        @keyframes flashG { 0%,100%{border-color:rgba(167,139,250,0.3)} 50%{border-color:#10b981;box-shadow:0 0 0 6px rgba(16,185,129,0.3)} }
+    </style>
+</head>
+<body>
+<div id="loader"><div class="spinner"></div></div>
+
+<nav class="top-nav">
+    <div style="display:flex;align-items:center;gap:10px;">
+        <div style="font-size:22px;">🔢</div>
+        <span style="font-weight:900;font-size:16px;">Điền Đáp Án Nhanh</span>
+    </div>
+    <div class="game-stats">
+        <div class="stat-item">
+            <div class="stat-val" id="score-disp">0</div>
+            <div class="stat-lbl">Điểm</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-val" id="streak-disp" style="color:#f59e0b;">0</div>
+            <div class="stat-lbl">🔥 Streak</div>
+        </div>
+    </div>
+</nav>
+
+<div class="game-area" id="game-area" style="display:none;">
+    <div class="problem-card">
+        <div class="q-label" id="q-label">Câu 1 / 10</div>
+        <div class="hint-text" id="hint-text" style="display:none;"></div>
+        <div class="problem-expr" id="problem-expr">...</div>
+        <div class="answer-section">
+            <input class="answer-input" id="answer-input" type="text" placeholder="Nhập đáp án..." autocomplete="off" />
+            <button class="submit-btn" onclick="checkAnswer()" id="submit-btn">✓ Gửi</button>
+        </div>
+        <div class="math-pad" id="math-pad"></div>
+        <div class="progress-dots" id="progress-dots"></div>
+    </div>
+</div>
+
+<!-- MENU -->
+<div class="overlay" id="menu-overlay">
+    <div class="menu-card">
+        <h1 style="font-size:28px;font-weight:900;margin-bottom:25px;background:linear-gradient(to right,#a78bfa,#38bdf8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">🔢 Điền Đáp Án Nhanh</h1>
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('play')">Chơi Ngay</div>
+            <div class="tab" onclick="switchTab('guide')">Hướng Dẫn</div>
+            <div class="tab" onclick="switchTab('leaderboard')">Xếp Hạng</div>
+        </div>
+        <div class="tab-content active" id="tab-play">
+            <p style="color:#94a3b8;margin-top:30px;">Tính toán và nhập đúng kết quả để ghi điểm!</p>
+            <button class="play-btn" onclick="startGame()">BẮT ĐẦU</button>
+        </div>
+        <div class="tab-content" id="tab-guide">
+            <div style="text-align:left;background:rgba(0,0,0,0.25);padding:22px;border-radius:18px;margin-top:10px;line-height:1.7;color:#cbd5e1;font-size:14px;">
+                <p style="margin-bottom:10px;">📝 Đọc biểu thức toán học và tính ra kết quả.</p>
+                <p style="margin-bottom:10px;">⌨️ Nhập đáp án vào ô và nhấn <b>Gửi</b> hoặc phím <b>Enter</b>.</p>
+                <p style="margin-bottom:10px;">🔥 Trả lời đúng liên tiếp sẽ tích <b>Streak</b> và nhân điểm thưởng.</p>
+                <p>⚡ Đáp án chấp nhận cả dạng phân số (1/2), thập phân (0.5) và số nguyên.</p>
+            </div>
+            <button class="play-btn" onclick="switchTab('play')" style="margin-top:16px;font-size:16px;padding:14px;">Hiểu rồi!</button>
+        </div>
+        <div class="tab-content" id="tab-leaderboard">
+            <div id="lb-container" style="margin-top:10px;max-height:240px;overflow-y:auto;"><p style="color:#64748b;padding-top:40px;">Đang tải...</p></div>
+            <button class="play-btn" onclick="switchTab('play')" style="font-size:15px;padding:12px;margin-top:12px;">Quay về</button>
+        </div>
+    </div>
+</div>
+
+<!-- WIN -->
+<div class="overlay hidden" id="win-overlay">
+    <div class="menu-card">
+        <div style="font-size:56px;margin-bottom:16px;">🎯</div>
+        <h2 style="font-size:30px;font-weight:900;margin-bottom:8px;">Xuất sắc!</h2>
+        <div style="display:flex;gap:16px;justify-content:center;margin:24px 0;">
+            <div style="background:rgba(255,255,255,0.05);padding:16px 20px;border-radius:18px;">
+                <div style="font-size:10px;color:#64748b;font-weight:700;">ĐIỂM SỐ</div>
+                <div style="font-size:28px;font-weight:900;color:#a78bfa;" id="final-score">0</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.05);padding:16px 20px;border-radius:18px;">
+                <div style="font-size:10px;color:#64748b;font-weight:700;">ĐÚNG / TỔNG</div>
+                <div style="font-size:28px;font-weight:900;color:#34d399;" id="final-correct">0/0</div>
+            </div>
+        </div>
+        <button class="play-btn" onclick="location.reload()">CHƠI LẠI</button>
+        <div onclick="handleExit()" style="margin-top:16px;color:#64748b;cursor:pointer;font-weight:700;">Thoát ra</div>
+    </div>
+</div>
+
+<script>
+    let questions = [];
+    let currentQ = 0;
+    let score = 0;
+    let correctCount = 0;
+    let streak = 0;
+    let qResults = [];
+    const MATH_KEYS = ['π', '√', '²', '³', '/', '×', '−', '∞', '∈', '≈'];
+
+    function handleExit() {
+        if (window.history.length > 1) window.history.back();
+        else if (window.opener) window.close();
+        else window.location.href = '/dashboard';
+    }
+
+    function switchTab(id) {
+        const tabs = ['play','guide','leaderboard'];
+        document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', tabs[i] === id));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById(`tab-${id}`).classList.add('active');
+    }
+
+    async function init() {
+        const params = new URLSearchParams(window.location.search);
+        const activityId = params.get('activityId');
+        if (!activityId) { showError('Không tìm thấy hoạt động!'); return; }
+        try {
+            const actRes = await fetch(`/api/course/activities/${activityId}`);
+            if (!actRes.ok) throw new Error('Không thể tải bài học');
+            const actData = await actRes.json();
+            const stRes = await fetch(`/api/studio/play?code=${actData.activity.details}`);
+            if (!stRes.ok) throw new Error('Mã Game không hợp lệ');
+            const stData = await stRes.json();
+            const cfg = typeof stData.game.config_json === 'string' ? JSON.parse(stData.game.config_json) : stData.game.config_json;
+            questions = (cfg.questions || []).sort(() => Math.random() - 0.5);
+            if (!questions.length) throw new Error('Game chưa có câu hỏi!');
+            qResults = new Array(questions.length).fill(null);
+            loadLeaderboard(activityId);
+            document.getElementById('loader').style.display = 'none';
+        } catch(e) { showError(e.message); }
+    }
+
+    async function loadLeaderboard(actId) {
+        try {
+            const data = await fetch(`/api/course/games/${actId}/leaderboard`).then(r => r.json());
+            const lb = document.getElementById('lb-container');
+            lb.innerHTML = data.leaderboard?.length > 0
+                ? data.leaderboard.map(u => `<div class="lb-item"><div style="display:flex;align-items:center;gap:10px;"><span class="lb-rank ${u.rank<=3?'rank-'+u.rank:''}">${u.rank}</span><span style="font-weight:700;">${u.name}</span></div><span style="color:#a78bfa;font-weight:900;">${u.score} đ</span></div>`).join('')
+                : '<p style="color:#64748b;padding-top:40px;">Hãy là người đầu tiên!</p>';
+        } catch(e) {}
+    }
+
+    function startGame() {
+        document.getElementById('menu-overlay').classList.add('hidden');
+        document.getElementById('game-area').style.display = 'flex';
+
+        // Build math pad
+        const pad = document.getElementById('math-pad');
+        pad.innerHTML = MATH_KEYS.map(k => `<button class="math-key" onclick="insertMath('${k}')">${k}</button>`).join('');
+
+        // Build progress dots
+        const dots = document.getElementById('progress-dots');
+        dots.innerHTML = questions.map((_, i) => `<div class="dot" id="dot-${i}"></div>`).join('');
+        
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        if (currentQ >= questions.length) { endGame(); return; }
+        const q = questions[currentQ];
+        document.getElementById('q-label').innerText = `Câu ${currentQ + 1} / ${questions.length}`;
+        document.getElementById('problem-expr').innerText = q.expression;
+        
+        const hintEl = document.getElementById('hint-text');
+        if (q.hint) { hintEl.style.display = 'block'; hintEl.innerText = '💡 Gợi ý: ' + q.hint; }
+        else hintEl.style.display = 'none';
+        
+        const inp = document.getElementById('answer-input');
+        inp.value = '';
+        inp.disabled = false;
+        inp.className = 'answer-input';
+        inp.focus();
+        document.getElementById('submit-btn').disabled = false;
+
+        // Update dots
+        for (let i = 0; i < questions.length; i++) {
+            const d = document.getElementById(`dot-${i}`);
+            d.className = 'dot' + (i < currentQ ? (qResults[i] ? ' done' : ' wrong') : i === currentQ ? ' active' : '');
+        }
+    }
+
+    function insertMath(ch) {
+        const inp = document.getElementById('answer-input');
+        inp.value += ch;
+        inp.focus();
+    }
+
+    function checkAnswer() {
+        const q = questions[currentQ];
+        const inp = document.getElementById('answer-input');
+        const raw = inp.value.trim().toLowerCase().replace(/\s/g, '');
+        if (!raw) return;
+
+        // Normalize answer: accept various forms
+        const normalize = s => s.toLowerCase().replace(/\s/g, '').replace(/×/g,'*').replace(/−/g,'-').replace(/÷/g,'/');
+        const userAns = normalize(raw);
+        const correctAns = normalize(String(q.answer));
+        let correct = userAns === correctAns;
+        
+        // Try numeric comparison with tolerance
+        if (!correct) {
+            try {
+                const uNum = parseFloat(userAns.replace(/[^\d.\-]/g, ''));
+                const cNum = parseFloat(correctAns.replace(/[^\d.\-]/g, ''));
+                if (!isNaN(uNum) && !isNaN(cNum)) correct = Math.abs(uNum - cNum) < 0.001;
+            } catch(e) {}
+        }
+
+        inp.disabled = true;
+        document.getElementById('submit-btn').disabled = true;
+        qResults[currentQ] = correct;
+
+        if (correct) {
+            streak++;
+            const multiplier = Math.min(streak, 5);
+            const pts = 100 * multiplier;
+            score += pts;
+            correctCount++;
+            document.getElementById('score-disp').innerText = score;
+            document.getElementById('streak-disp').innerText = streak;
+            inp.className = 'answer-input flash-correct';
+        } else {
+            streak = 0;
+            document.getElementById('streak-disp').innerText = 0;
+            inp.className = 'answer-input shake';
+            inp.style.borderColor = '#ef4444';
+            // Show correct answer
+            setTimeout(() => { inp.value = '→ ' + q.answer; inp.style.color = '#f87171'; }, 300);
+        }
+
+        setTimeout(() => {
+            inp.style.color = '#fff'; inp.style.borderColor = '';
+            currentQ++;
+            renderQuestion();
+        }, 1600);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('answer-input').addEventListener('keydown', e => {
+            if (e.key === 'Enter') checkAnswer();
+        });
+    });
+
+    function endGame() {
+        document.getElementById('game-area').style.display = 'none';
+        document.getElementById('final-score').innerText = score;
+        document.getElementById('final-correct').innerText = `${correctCount}/${questions.length}`;
+        document.getElementById('win-overlay').classList.remove('hidden');
+        const actId = new URLSearchParams(window.location.search).get('activityId');
+        fetch('/api/course/scorm/commit', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ activityId: parseInt(actId), score: Math.min(score / 10, 100), status: 'completed', successStatus: 'passed', isManualComplete: true })
+        });
+    }
+
+    function showError(msg) {
+        document.getElementById('loader').innerHTML = `<div style="color:#f87171;text-align:center;padding:40px;max-width:400px"><div style="font-size:40px;mb-4">⚠️</div><div style="font-size:16px">${msg}</div></div>`;
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>

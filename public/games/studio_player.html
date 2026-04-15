@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>iMath Studio Player - Premium Edition</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+        
+        body {
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        /* Particles Background Simulation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 40px 40px;
+            z-index: -1;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            z-index: 5000;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.1); transform: translateX(-5px); }
+
+        .game-stats { display: flex; gap: 30px; }
+        .stat-item { text-align: center; }
+        .stat-val { font-size: 24px; font-weight: 900; color: #38bdf8; line-height: 1; }
+        .stat-lbl { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; margin-top: 5px; }
+
+        /* Game Grid Container */
+        .game-area {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            perspective: 1000px;
+        }
+        .grid {
+            display: grid;
+            gap: 20px;
+            max-width: 900px;
+            width: 100%;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Card Styling */
+        .card {
+            aspect-ratio: 1/1;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        .card:hover { transform: scale(1.05); }
+        .card.flipped { transform: rotateY(180deg); }
+        .card.matched { animation: matchPop 0.6s forwards; pointer-events: none; }
+
+        @keyframes matchPop {
+            0% { transform: rotateY(180deg) scale(1.1); }
+            50% { transform: rotateY(180deg) scale(1.2); filter: brightness(1.5); }
+            100% { transform: rotateY(180deg) scale(0); opacity: 0; }
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%; height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            text-align: center;
+            font-weight: 800;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.05);
+            font-size: clamp(14px, 4vw, 20px);
+        }
+        .card-front {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: rgba(255,255,255,0.2);
+            font-size: 40px;
+        }
+        .card-front::after { content: 'iM'; }
+        
+        .card-back {
+            background: #fff;
+            color: #1e293b;
+            transform: rotateY(180deg);
+            border: 4px solid #38bdf8;
+        }
+
+        /* Overlay & Tabs UI */
+        .overlay {
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 2000;
+        }
+        .overlay.hidden { display: none; }
+
+        .menu-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(0,0,0,0.3);
+            padding: 6px;
+            border-radius: 18px;
+            margin-bottom: 30px;
+        }
+        .tab {
+            flex: 1;
+            padding: 12px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            color: #94a3b8;
+            transition: 0.3s;
+        }
+        .tab.active {
+            background: #fff;
+            color: #0f172a;
+            box-shadow: 0 4px 12px rgba(255,255,255,0.1);
+        }
+
+        .tab-content { display: none; min-height: 250px; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .play-btn {
+            background: linear-gradient(135deg, #0cebeb, #20e2ff, #2979ff);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 24px;
+            font-weight: 900;
+            border-radius: 24px;
+            cursor: pointer;
+            box-shadow: 0 15px 35px rgba(32, 226, 255, 0.3);
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: pulse 2s infinite;
+        }
+        .play-btn:hover { transform: scale(1.05); filter: brightness(1.1); }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(32, 226, 255, 0.6); }
+            70% { box-shadow: 0 0 0 20px rgba(32, 226, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(32, 226, 255, 0); }
+        }
+
+        /* Leaderboard Styling */
+        .lb-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 20px; background: rgba(255,255,255,0.03);
+            margin-bottom: 8px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.03);
+        }
+        .lb-rank {
+            width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 14px;
+        }
+        .rank-1 { background: #facc15; color: #854d0e; }
+        .rank-2 { background: #cbd5e1; color: #1e293b; }
+        .rank-3 { background: #fb923c; color: #7c2d12; }
+
+        /* Loader */
+        #loader { position: fixed; inset: 0; background: #0f172a; display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid #38bdf8; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+    <div id="loader"><div class="spinner"></div></div>
+
+    <nav class="top-nav">
+        <div></div> <!-- Spacer for flex alignment -->
+        <div class="game-stats">
+            <div class="stat-item">
+                <div class="stat-val" id="timer">0s</div>
+                <div class="stat-lbl">Thời gian</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-val" id="mistakes" style="color: #fb7185">0</div>
+                <div class="stat-lbl">Sai sót</div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="game-area">
+        <div class="grid" id="grid"></div>
+    </div>
+
+    <!-- MAIN MENU OVERLAY -->
+    <div class="overlay" id="menu-overlay">
+        <div class="menu-card">
+            <h1 style="font-size: 32px; font-weight: 900; margin-bottom: 30px; background: linear-gradient(to right, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                iMath Studio Player
+            </h1>
+
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('play')">Chơi Ngay</div>
+                <div class="tab" onclick="switchTab('guide')">Hướng Dẫn</div>
+                <div class="tab" onclick="switchTab('leaderboard')">Xếp Hạng</div>
+            </div>
+
+            <!-- PLAY TAB -->
+            <div class="tab-content active" id="tab-play">
+                <div style="margin-top: 40px;">
+                    <p style="color: #94a3b8; margin-bottom: 20px;">Sẵn sàng để thử thách trí nhớ của bạn?</p>
+                    <button class="play-btn" onclick="startGame()">BẮT ĐẦU CHƠI</button>
+                </div>
+            </div>
+
+            <!-- GUIDE TAB -->
+            <div class="tab-content" id="tab-guide">
+                <div style="text-align: left; background: rgba(0,0,0,0.2); padding: 25px; border-radius: 20px; line-height: 1.6;">
+                    <p style="margin-bottom: 12px;">🎯 <strong>Mục tiêu:</strong> Tìm tất cả các cặp thẻ tương ứng trong thời gian ngắn nhất.</p>
+                    <p style="margin-bottom: 12px;">🎴 <strong>Cách chơi:</strong> Nhấn vào thẻ để lật, sau đó tìm thẻ có nội dung liên quan.</p>
+                    <p>💡 <strong>Gợi ý:</strong> Hãy ghi nhớ vị trí của các thẻ đã lật để hoàn thành màn chơi nhanh hơn!</p>
+                </div>
+                <button class="back-btn" style="width: 100%; justify-content: center; margin-top: 20px;" onclick="switchTab('play')">Hiểu rồi, chơi ngay!</button>
+            </div>
+
+            <!-- LEADERBOARD TAB -->
+            <div class="tab-content" id="tab-leaderboard">
+                <div id="lb-container" style="max-height: 250px; overflow-y: auto;">
+                    <p style="color: #64748b; padding-top: 50px;">Đang tải dữ liệu...</p>
+                </div>
+                <button class="back-btn" style="width: 100%; justify-content: center; margin-top: 20px;" onclick="switchTab('play')">Quay về</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WIN OVERLAY -->
+    <div class="overlay hidden" id="win-overlay">
+        <div class="menu-card">
+            <div style="font-size: 60px; margin-bottom: 20px;">🌟</div>
+            <h2 style="font-size: 36px; font-weight: 900; margin-bottom: 10px;">Tuyệt vời!</h2>
+            <p style="color: #94a3b8; margin-bottom: 30px;">Bạn đã hoàn thành thử thách.</p>
+            
+            <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 40px;">
+                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px; min-width: 110px;">
+                    <div style="font-size: 10px; color: #64748b; font-weight: bold;">THỜI GIAN</div>
+                    <div style="font-size: 24px; font-weight: 900; color: #38bdf8;" id="final-time">0s</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px; min-width: 110px;">
+                    <div style="font-size: 10px; color: #64748b; font-weight: bold;">ĐIỂM SỐ</div>
+                    <div style="font-size: 24px; font-weight: 900; color: #fbbf24;" id="final-score">0</div>
+                </div>
+            </div>
+
+            <button class="play-btn" onclick="location.reload()">CHƠI LẠI</button>
+            <div onclick="handleExit()" style="display: block; margin-top: 20px; color: #94a3b8; text-decoration: none; font-weight: 700; cursor: pointer;">Thoát ra</div>
+        </div>
+    </div>
+
+    <script>
+        // Use a robust exit logic to handle tabs and history
+        function handleExit() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else if (window.opener) {
+                window.close();
+            } else {
+                window.location.href = '/dashboard';
+            }
+        }
+
+        let cardsData = [];
+        let firstCard = null;
+        let secondCard = null;
+        let lockBoard = false;
+        let matchesFound = 0;
+        let totalPairs = 0;
+        
+        let timer = 0;
+        let interval;
+        let mistakes = 0;
+        let pointsBase = 1000;
+
+        // Switch Tabs Logic
+        function switchTab(id) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            const selectedTab = document.querySelector(`.tab:nth-child(${id === 'play' ? 1 : id === 'guide' ? 2 : 3})`);
+            selectedTab.classList.add('active');
+            document.getElementById(`tab-${id}`).classList.add('active');
+        }
+
+        async function init() {
+            const params = new URLSearchParams(window.location.search);
+            const activityId = params.get('activityId');
+            if(!activityId) { 
+                document.getElementById('loader').innerHTML = '<div style="color:white; text-align:center">Lỗi: Không tìm thấy Hoạt động học tập!</div>';
+                return;
+            }
+
+            try {
+                // Fetch Activity & Game Config
+                const actRes = await fetch(`/api/course/activities/${activityId}`);
+                if (!actRes.ok) throw new Error("Không thể tải thông tin.");
+                const actData = await actRes.json();
+                
+                const gameCode = actData.activity.details;
+                const stRes = await fetch(`/api/studio/play?code=${gameCode}`);
+                if(!stRes.ok) throw new Error("Lỗi tải trò chơi.");
+                const stData = await stRes.json();
+
+                const config = typeof stData.game.config_json === 'string' ? JSON.parse(stData.game.config_json) : stData.game.config_json;
+                const pairs = config.pairs || [];
+                totalPairs = pairs.length;
+                
+                buildGrid(pairs);
+                loadLeaderboard(activityId);
+
+                document.getElementById('loader').style.display = 'none';
+            } catch (error) {
+                console.error(error);
+                alert("Lỗi: " + error.message);
+            }
+        }
+
+        function buildGrid(pairs) {
+            let items = [];
+            pairs.slice(0, 10).forEach((p, i) => {
+                items.push({ text: p.question, pairId: i });
+                items.push({ text: p.answer, pairId: i });
+            });
+
+            items.sort(() => Math.random() - 0.5);
+
+            const grid = document.getElementById('grid');
+            grid.style.gridTemplateColumns = items.length <= 12 ? 'repeat(3, 1fr)' : 'repeat(4, 1fr)';
+            
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.id = item.pairId;
+                card.innerHTML = `
+                    <div class="card-face card-front"></div>
+                    <div class="card-face card-back">${item.text}</div>
+                `;
+                card.addEventListener('click', () => onCardClick(card));
+                grid.appendChild(card);
+            });
+        }
+
+        async function loadLeaderboard(activityId) {
+            try {
+                const res = await fetch(`/api/course/games/${activityId}/leaderboard`);
+                const data = await res.json();
+                const container = document.getElementById('lb-container');
+                
+                if (data.leaderboard && data.leaderboard.length > 0) {
+                    container.innerHTML = data.leaderboard.map(u => `
+                        <div class="lb-item">
+                            <div style="display:flex; align-items:center; gap:12px">
+                                <span class="lb-rank rank-${u.rank <= 3 ? u.rank : 'none'}">${u.rank}</span>
+                                <span style="font-weight:700">${u.name}</span>
+                            </div>
+                            <span style="color:#38bdf8; font-weight:900">${u.score} đ</span>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p style="color:#64748b; padding-top:50px">Hãy là người đầu tiên chinh phục trò chơi này!</p>';
+                }
+            } catch(e) {
+                document.getElementById('lb-container').innerHTML = '<p style="color:#64748b">Không thể tải BXH.</p>';
+            }
+        }
+
+        function startGame() {
+            document.getElementById('menu-overlay').classList.add('hidden');
+            timer = 0; mistakes = 0; matchesFound = 0;
+            interval = setInterval(() => {
+                timer++;
+                document.getElementById('timer').innerText = timer + 's';
+            }, 1000);
+        }
+
+        function onCardClick(card) {
+            if (lockBoard || card === firstCard || card.classList.contains('matched')) return;
+
+            card.classList.add('flipped');
+
+            if (!firstCard) {
+                firstCard = card;
+                return;
+            }
+
+            secondCard = card;
+            lockBoard = true;
+
+            if (firstCard.dataset.id === secondCard.dataset.id) {
+                setTimeout(() => {
+                    firstCard.classList.add('matched');
+                    secondCard.classList.add('matched');
+                    matchesFound++;
+                    resetTurn();
+                    if (matchesFound === totalPairs || matchesFound === 10) endGame();
+                }, 500);
+            } else {
+                mistakes++;
+                document.getElementById('mistakes').innerText = mistakes;
+                setTimeout(() => {
+                    firstCard.classList.remove('flipped');
+                    secondCard.classList.remove('flipped');
+                    resetTurn();
+                }, 1000);
+            }
+        }
+
+        function resetTurn() { [firstCard, secondCard, lockBoard] = [null, null, false]; }
+
+        function endGame() {
+            clearInterval(interval);
+            let score = Math.max(10, pointsBase - (timer * 3) - (mistakes * 20));
+            
+            document.getElementById('final-time').innerText = timer + 's';
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('win-overlay').classList.remove('hidden');
+
+            // Save Score
+            const params = new URLSearchParams(window.location.search);
+            const activityId = params.get('activityId');
+            fetch('/api/course/scorm/commit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    activityId: parseInt(activityId),
+                    score: score,
+                    status: 'completed',
+                    successStatus: 'passed',
+                    isManualComplete: true
+                })
+            });
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
