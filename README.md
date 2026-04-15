@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+🚀 iMath - Hệ thống Quản lý & Xử lý Dữ liệu Giáo dục Thông minh
+Dự án này được xây dựng trên nền tảng Next.js (App Router), tập trung vào việc tối ưu hóa giao diện người dùng (UI/UX) và xử lý dữ liệu khảo sát giáo dục số.
 
-## Getting Started
+📋 Mục lục
+Yêu cầu hệ thống
 
-First, run the development server:
+Hướng dẫn cài đặt
 
-```bash
+Khởi chạy dự án
+
+Cấu trúc dự án
+
+Lưu ý về dữ liệu
+
+💻 Yêu cầu hệ thống
+Trước khi bắt đầu, hãy đảm bảo máy tính của bạn đã cài đặt:
+
+Node.js: Phiên bản 18.x trở lên.
+
+npm hoặc yarn (trình quản lý gói).
+
+🛠 Hướng dẫn cài đặt
+Bước 1: Tải mã nguồn từ GitHub về máy (nếu chưa có):
+
+Bash
+git clone https://github.com/transonbachts-ops/imath.git
+cd imath
+Bước 2: Cài đặt các thư viện cần thiết (Dependencies):
+
+Bash
+npm install
+# hoặc
+yarn install
+🚀 Khởi chạy dự án
+1. Môi trường phát triển (Development)
+Để chạy dự án trên máy cá nhân và xem các thay đổi trực tiếp:
+
+Bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Sau đó, mở trình duyệt và truy cập: http://localhost:3000
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Xây dựng bản chính thức (Production)
+Dành cho việc triển khai lên máy chủ:
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Bash
+npm run build
+npm run start
+📂 Cấu trúc dự án chính
+/app: Chứa các trang (pages) và components chính của ứng dụng.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+/public: Chứa các tài nguyên tĩnh như hình ảnh, biểu tượng.
 
-## Learn More
+/.gitignore: Cấu hình các file và thư mục không đưa lên GitHub (như node_modules, .env).
 
-To learn more about Next.js, take a look at the following resources:
+⚠️ Lưu ý về dữ liệu bài giảng
+Các tệp tin nặng như video (mp4) hoặc bài giảng nén (rar) trong thư mục public/scorm/ hoặc public/uploads/ được cấu hình để không đẩy lên GitHub nhằm đảm bảo tốc độ và bảo mật.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Nếu bạn tải mã nguồn này về, vui lòng liên hệ quản trị viên để nhận các file tài nguyên lớn này.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+🌐 Triển khai (Deployment)
+Dự án được tối ưu hóa để triển khai dễ dàng nhất trên nền tảng Vercel.
 
-## Deploy on Vercel
+Người thực hiện: Basch 
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Mục tiêu: Đóng góp vào tiến trình chuyển đổi số trong giáo dục.
