@@ -1,5 +1,5 @@
 @echo off
-title iMath - ONLINE NGROK SERVER
+title H2bmath - ONLINE NGROK SERVER
 SET "NODE_PATH=C:\laragon\bin\nodejs\node-v22"
 SET "PATH=%NODE_PATH%;%PATH%"
 cd /d "%~dp0"
@@ -11,7 +11,7 @@ echo [+] Dang Dong goi code moi nhat
 call npm run build
 
 echo [+] Dang khoi chay Server phia sau...
-start "iMath-Server-Prod" /min cmd /c "npm run start"
+start "H2bmath-Server-Prod" /min cmd /c "npm run start"
 
 echo [+] Dang ket noi Ngrok...
 ngrok http 3000

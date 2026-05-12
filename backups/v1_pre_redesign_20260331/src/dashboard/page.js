@@ -113,7 +113,7 @@ export default async function Dashboard({ searchParams }) {
       <nav style={{background: '#003380', color: '#fff', padding: '0 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 70, position: 'sticky', top: 0, zIndex: 50, boxShadow: '0 2px 15px rgba(0,0,0,0.2)'}}>
         <div style={{display: 'flex', alignItems: 'center', gap: '40px', height: '100%'}}>
           <Link href="/dashboard" style={{fontSize: 26, fontWeight: 900, color: '#fff', textDecoration: 'none', letterSpacing: -1}}>
-            iMath<span style={{color: '#ff6b6b'}}>.</span>
+            H2bmath<span style={{color: '#ff6b6b'}}>.</span>
           </Link>
           <div style={{display: 'flex', gap: '25px', fontSize: 14, fontWeight: 600, height: '100%', alignItems: 'center'}}>
              <Link href="/dashboard" style={{color: '#fff', textDecoration: 'none', borderBottom: '3px solid #fff', height: '100%', display: 'flex', alignItems: 'center', boxSizing: 'border-box', paddingTop: 3}}>Trang chủ</Link>

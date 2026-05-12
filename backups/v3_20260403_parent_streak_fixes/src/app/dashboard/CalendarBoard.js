@@ -41,7 +41,7 @@ export default function CalendarBoard({ variant = 'default', dailyQuizzes = [] }
       {/* HEADER CONTROLS */}
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 30, flexWrap: 'wrap', gap: 20}}>
          <div style={{display: 'flex', alignItems: 'center', gap: 15}}>
-           <h2 style={{color: 'var(--text-primary)', fontSize: iMath_fontSize(variant), fontWeight: 950, letterSpacing: -1}}>
+           <h2 style={{color: 'var(--text-primary)', fontSize: H2bmath_fontSize(variant), fontWeight: 950, letterSpacing: -1}}>
              {variant === 'full' ? '🗓️ ' : '📅 '}{monthNames[month]} {year}
            </h2>
            {variant === 'full' && (
@@ -161,7 +161,7 @@ export default function CalendarBoard({ variant = 'default', dailyQuizzes = [] }
   )
 }
 
-function iMath_fontSize(variant) {
+function H2bmath_fontSize(variant) {
   return variant === 'full' ? 32 : 24;
 }
 

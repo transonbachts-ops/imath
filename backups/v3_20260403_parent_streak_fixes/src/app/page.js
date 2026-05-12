@@ -53,7 +53,7 @@ export default async function Home() {
       {/* NAVBAR */}
       <nav style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '25px 60px', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 100, color: '#fff'}}>
         <div style={{fontSize: 28, fontWeight: 950, color: '#fff', letterSpacing: -1.5}}>
-          iMath<span style={{color: 'var(--secondary)'}}>.</span>
+          H2bmath<span style={{color: 'var(--secondary)'}}>.</span>
         </div>
         <div style={{display: 'flex', gap: 40, alignItems: 'center'}}>
           <Link href="#courses" style={{color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: 14, opacity: 0.9}}>Khóa học</Link>
@@ -69,7 +69,7 @@ export default async function Home() {
       <section style={{height: '95vh', background: 'linear-gradient(rgba(79, 70, 229, 0.75), rgba(124, 58, 237, 0.45)), url(https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2000) center/cover', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', color: '#fff', padding: '0 20px', borderRadius: '0 0 60px 60px', overflow: 'hidden'}}>
         <div style={{maxWidth: 900}}>
           <div style={{display: 'inline-block', background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(10px)', padding: '10px 24px', borderRadius: 30, fontSize: 13, fontWeight: 800, marginBottom: 25, border: '1px solid rgba(255,255,255,0.2)', color: '#fff', textTransform: 'uppercase', letterSpacing: 1}}>Nền tảng học Toán trực tuyến hàng đầu Việt Nam</div>
-          <h1 style={{fontSize: 72, fontWeight: 950, lineHeight: 1.1, marginBottom: 30, letterSpacing: -2, color: '#ffffff'}}>Khai phá tư duy học Toán <br/><span style={{color: 'var(--secondary)'}}>Vượt trội cùng iMath</span></h1>
+          <h1 style={{fontSize: 72, fontWeight: 950, lineHeight: 1.1, marginBottom: 30, letterSpacing: -2, color: '#ffffff'}}>Khai phá tư duy học Toán <br/><span style={{color: 'var(--secondary)'}}>Vượt trội cùng H2bmath</span></h1>
           <p style={{fontSize: 22, color: '#f0f4ff', marginBottom: 45, lineHeight: 1.6, maxWidth: 750, margin: '0 auto 45px', opacity: 0.9}}>Hệ thống LMS chuyên nghiệp giúp học sinh tiếp cận phương pháp giải toán mới, luyện đề hiệu quả và theo sát lộ trình cá nhân hóa.</p>
           <div style={{display: 'flex', gap: 20, justifyContent: 'center'}}>
             <Link href="/register" style={{background: '#fff', color: '#1e3a8a', padding: '18px 45px', borderRadius: 16, textDecoration: 'none', fontWeight: 800, fontSize: 16, boxShadow: '0 15px 35px rgba(0,0,0,0.1)'}}>Khám phá lộ trình</Link>
@@ -108,7 +108,7 @@ export default async function Home() {
          <div style={{maxWidth: 1200, margin: '0 auto'}}>
             <div style={{textAlign: 'center', marginBottom: 60}}>
                <div style={{display: 'inline-block', background: 'var(--primary-light)', color: 'var(--primary)', padding: '8px 20px', borderRadius: 30, fontSize: 13, fontWeight: 700, marginBottom: 15, textTransform: 'uppercase', letterSpacing: 1.2}}>Khóa học nổi bật</div>
-               <h2 style={{fontSize: 52, fontWeight: 950, color: 'var(--primary)', margin: 0, letterSpacing: -1.5}}>Chương trình đào tạo iMath</h2>
+               <h2 style={{fontSize: 52, fontWeight: 950, color: 'var(--primary)', margin: 0, letterSpacing: -1.5}}>Chương trình đào tạo H2bmath</h2>
             </div>
             
             <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: 35}}>
@@ -119,7 +119,7 @@ export default async function Home() {
                     </div>
                     <div style={{padding: 35}}>
                        <h3 style={{margin: '0 0 15px 0', fontSize: 24, color: 'var(--text-primary)', lineHeight: 1.3, fontWeight: 900}}>{c.title}</h3>
-                       <p style={{color: 'var(--text-secondary)', fontSize: 16, lineHeight: 1.7, marginBottom: 30, minHeight: 80, overflow: 'hidden'}}>{c.description || 'Tham gia cùng iMath để khám phá kho tàng tri thức toán học đồ sộ với lộ trình học tập tối ưu.'}</p>
+                       <p style={{color: 'var(--text-secondary)', fontSize: 16, lineHeight: 1.7, marginBottom: 30, minHeight: 80, overflow: 'hidden'}}>{c.description || 'Tham gia cùng H2bmath để khám phá kho tàng tri thức toán học đồ sộ với lộ trình học tập tối ưu.'}</p>
                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-muted)', paddingTop: 25}}>
                           <Link href={`/login`} className="btn btn-primary" style={{padding: '12px 30px', fontSize: 14, borderRadius: 12}}>Vào Lớp →</Link>
                           {c.price > 0 && <span style={{fontWeight: 950, color: 'var(--primary)', fontSize: 18}}>{c.price.toLocaleString()}đ</span>}
@@ -158,7 +158,7 @@ export default async function Home() {
             <div style={{textAlign: 'center', marginBottom: 50}}>
                <div style={{display: 'inline-block', background: 'var(--primary-light)', color: 'var(--primary)', padding: '8px 20px', borderRadius: 30, fontSize: 13, fontWeight: 700, marginBottom: 15, textTransform: 'uppercase', letterSpacing: 1.2}}>Gương Mặt Tiêu Biểu</div>
                <h2 style={{fontSize: 48, fontWeight: 950, color: 'var(--primary)', margin: 0, letterSpacing: -1}}>Top Học Viên Siêng Năng Nhất</h2>
-               <p style={{color: 'var(--text-secondary)', fontSize: 16, marginTop: 15, fontWeight: 500}}>Vinh danh góc học tập mỗi ngày trên iMath</p>
+               <p style={{color: 'var(--text-secondary)', fontSize: 16, marginTop: 15, fontWeight: 500}}>Vinh danh góc học tập mỗi ngày trên H2bmath</p>
             </div>
             
             {topStudents.length > 0 ? (
@@ -200,7 +200,7 @@ export default async function Home() {
          <div style={{maxWidth: 1100, margin: '0 auto'}}>
             <div style={{textAlign: 'center', marginBottom: 50}}>
                <div style={{display: 'inline-block', background: 'var(--primary-light)', color: 'var(--primary)', padding: '8px 20px', borderRadius: 30, fontSize: 13, fontWeight: 700, marginBottom: 15, textTransform: 'uppercase'}}>Cảm nhận học viên</div>
-               <h2 style={{fontSize: 48, fontWeight: 950, color: 'var(--primary)', margin: 0, letterSpacing: -1}}>Học viên nói gì về iMath?</h2>
+               <h2 style={{fontSize: 48, fontWeight: 950, color: 'var(--primary)', margin: 0, letterSpacing: -1}}>Học viên nói gì về H2bmath?</h2>
             </div>
             <div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 30}}>
                {(feedbacks.length > 0 ? feedbacks : [
@@ -215,7 +215,7 @@ export default async function Home() {
                      <div style={{width: 45, height: 45, borderRadius: 14, background: 'linear-gradient(135deg, #2563eb, #6366f1)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, flexShrink: 0}}>{(r.full_name||'U')[0]}</div>
                      <div>
                         <div style={{fontWeight: 800, color: '#1e293b', fontSize: 15}}>{r.full_name}</div>
-                        <div style={{color: '#64748b', fontSize: 12, fontWeight: 600}}>Học viên iMath</div>
+                        <div style={{color: '#64748b', fontSize: 12, fontWeight: 600}}>Học viên H2bmath</div>
                      </div>
                      <div style={{marginLeft: 'auto', color: '#f59e0b', fontSize: 14, display: 'flex', gap: 2}}>
                         {[1, 2, 3, 4, 5].map(s => (
@@ -234,8 +234,8 @@ export default async function Home() {
          <div style={{maxWidth: 1100, margin: '0 auto'}}>
             <div style={{display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 60, marginBottom: 60}}>
                <div>
-                  <div style={{fontSize: 32, fontWeight: 950, marginBottom: 25, letterSpacing: -1.5}}>iMath<span style={{color: 'var(--secondary)'}}>.</span></div>
-                  <p style={{color: '#c5d8ff', lineHeight: 1.8, fontSize: 16, opacity: 0.8}}>Nền tảng giáo dục hiện đại, mang đến trải nghiệm học tập đỉnh cao cho học sinh Việt Nam. iMath cam kết chất lượng đào tạo và sự tiến bộ vượt bậc của từng học viên.</p>
+                  <div style={{fontSize: 32, fontWeight: 950, marginBottom: 25, letterSpacing: -1.5}}>H2bmath<span style={{color: 'var(--secondary)'}}>.</span></div>
+                  <p style={{color: '#c5d8ff', lineHeight: 1.8, fontSize: 16, opacity: 0.8}}>Nền tảng giáo dục hiện đại, mang đến trải nghiệm học tập đỉnh cao cho học sinh Việt Nam. H2bmath cam kết chất lượng đào tạo và sự tiến bộ vượt bậc của từng học viên.</p>
                </div>
                <div>
                   <h4 style={{fontSize: 18, fontWeight: 800, marginBottom: 25, color: '#fff', textTransform: 'uppercase', letterSpacing: 1}}>Liên kết</h4>
@@ -263,7 +263,7 @@ export default async function Home() {
                </div>
             </div>
             <div style={{borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 40, textAlign: 'center', fontSize: 14, color: '#c5d8ff', opacity: 0.6, fontWeight: 600}}>
-               &copy; 2026 iMath LMS Platform. All Rights Reserved.
+               &copy; 2026 H2bmath LMS Platform. All Rights Reserved.
             </div>
          </div>
       </footer>

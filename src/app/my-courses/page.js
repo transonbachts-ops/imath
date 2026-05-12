@@ -66,7 +66,7 @@ export default async function MyCoursesPage() {
       <nav className="glass-panel" style={{color: 'var(--text-primary)', padding: '0 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 75, position: 'sticky', top: 0, zIndex: 100, borderBottom: '1px solid rgba(255,255,255,0.4)', borderRadius: '0 0 24px 24px', margin: '0 10px'}}>
         <div style={{display: 'flex', alignItems: 'center', gap: '50px', height: '100%'}}>
           <Link href="/dashboard" style={{fontSize: 26, fontWeight: 950, color: 'var(--primary)', textDecoration: 'none', letterSpacing: -1.5}}>
-            iMath<span style={{color: 'var(--secondary)'}}>.</span>
+            H2bmath<span style={{color: 'var(--secondary)'}}>.</span>
           </Link>
           <div style={{display: 'flex', gap: '30px', fontSize: 14, fontWeight: 700, height: '100%', alignItems: 'center'}}>
              <Link href="/dashboard" style={{color: 'var(--text-secondary)', textDecoration: 'none'}}>Trang chủ</Link>
@@ -98,7 +98,7 @@ export default async function MyCoursesPage() {
            {courses.length === 0 ? (
              <div style={{textAlign: 'center', padding: '100px 0', background: 'var(--card-bg)', borderRadius: 12, border: '1px solid var(--border-muted)'}}>
                <p style={{fontSize: 18, color: 'var(--text-secondary)', marginBottom: 20}}>Bạn chưa tham gia vào Khóa học nào.</p>
-               <Link href="/dashboard#courses-section" style={{background: '#e74c3c', color: '#fff', padding: '12px 30px', borderRadius: 30, textDecoration: 'none', fontWeight: 'bold'}}>Khám phá Khóa học Của iMath</Link>
+               <Link href="/dashboard#courses-section" style={{background: '#e74c3c', color: '#fff', padding: '12px 30px', borderRadius: 30, textDecoration: 'none', fontWeight: 'bold'}}>Khám phá Khóa học Của H2bmath</Link>
              </div>
            ) : (
              <div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 30}}>
@@ -110,7 +110,7 @@ export default async function MyCoursesPage() {
 
                              {/* Generic Logo Mock */}
                              <div style={{position: 'absolute', bottom: 10, left: 10, background: 'var(--card-bg)', padding: 5, borderRadius: 6, display: 'inline-block'}}>
-                                <span style={{fontWeight: 900, color: 'var(--text-primary)'}}>iMath<span style={{color: '#e74c3c'}}>.</span></span>
+                                <span style={{fontWeight: 900, color: 'var(--text-primary)'}}>H2bmath<span style={{color: '#e74c3c'}}>.</span></span>
                              </div>
                           </div>
                           <div style={{padding: '20px', flexGrow: 1, display: 'flex', flexDirection: 'column'}}>

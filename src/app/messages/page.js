@@ -145,7 +145,7 @@ export default function UnifiedMessengerPage() {
       <nav style={{background: '#003380', color: '#fff', padding: '0 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 66, flexShrink: 0, zIndex: 100, boxShadow: '0 2px 10px rgba(0,0,0,0.1)'}}>
         <div style={{display: 'flex', alignItems: 'center', gap: 20}}>
           <span style={{fontSize: 24, fontWeight: 900, letterSpacing: -1, color: '#fff'}}>
-            iMath<span style={{color: '#fff'}}>.</span>
+            H2bmath<span style={{color: '#fff'}}>.</span>
           </span>
           <span style={{background: 'rgba(255,255,255,0.15)', fontSize: 11, padding: '3px 10px', borderRadius: 20, fontWeight: 700}}>
             💬 SỔ LIÊN LẠC THÔNG MINH

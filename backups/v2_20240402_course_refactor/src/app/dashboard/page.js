@@ -114,7 +114,7 @@ export default async function Dashboard({ searchParams }) {
       <nav className="glass-panel" style={{color: 'var(--text-primary)', padding: '0 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 75, position: 'sticky', top: 0, zIndex: 100, borderBottom: '1px solid rgba(255,255,255,0.4)', borderRadius: '0 0 24px 24px', margin: '0 10px'}}>
         <div style={{display: 'flex', alignItems: 'center', gap: '40px', height: '100%'}}>
           <Link href="/dashboard" style={{fontSize: 26, fontWeight: 950, color: 'var(--primary)', textDecoration: 'none', letterSpacing: -1.5}}>
-            iMath<span style={{color: 'var(--secondary)'}}>.</span>
+            H2bmath<span style={{color: 'var(--secondary)'}}>.</span>
           </Link>
           <div style={{display: 'flex', gap: '25px', fontSize: 14, fontWeight: 700, height: '100%', alignItems: 'center'}}>
              <Link href="/dashboard" style={{color: 'var(--primary)', textDecoration: 'none', borderBottom: '3px solid var(--secondary)', height: '100%', display: 'flex', alignItems: 'center', boxSizing: 'border-box', paddingTop: 3}}>Trang chủ</Link>

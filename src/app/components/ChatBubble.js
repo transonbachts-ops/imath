@@ -69,9 +69,9 @@ export default function ChatBubble() {
   useEffect(() => {
     if (hasAccess && messages.length === 0) {
       if (canUseAi) {
-        setMessages([{ role: 'model', text: 'Chào bạn! Tôi là iMath AI. Tôi có thể giúp gì cho bạn hôm nay?' }]);
+        setMessages([{ role: 'model', text: 'Chào bạn! Tôi là H2bmath AI. Tôi có thể giúp gì cho bạn hôm nay?' }]);
       } else {
-        setMessages([{ role: 'model', text: 'Bạn đã đăng nhập hệ thống, nhưng hiện tại chức năng AI đang bị khóa với tài khoản của bạn. Vui lòng liên hệ bộ phận hỗ trợ hoặc Admin để xin cấp quyền sử dụng iMath AI.' }]);
+        setMessages([{ role: 'model', text: 'Bạn đã đăng nhập hệ thống, nhưng hiện tại chức năng AI đang bị khóa với tài khoản của bạn. Vui lòng liên hệ bộ phận hỗ trợ hoặc Admin để xin cấp quyền sử dụng H2bmath AI.' }]);
       }
     }
   }, [hasAccess, canUseAi, messages]);
@@ -153,7 +153,7 @@ export default function ChatBubble() {
           }}>
             <div style={{ width: 35, height: 35, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>🤖</div>
             <div style={{ color: '#ffffff' }}>
-              <div style={{ fontWeight: 900, fontSize: 18, color: '#ffffff', textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>iMath AI</div>
+              <div style={{ fontWeight: 900, fontSize: 18, color: '#ffffff', textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>H2bmath AI</div>
               <div style={{ fontSize: 13, fontWeight: 600, color: '#ffffff', opacity: 1 }}>Trợ lý học tập thông minh</div>
             </div>
           </div>

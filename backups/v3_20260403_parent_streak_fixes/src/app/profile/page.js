@@ -70,7 +70,7 @@ export default function ProfilePage() {
       <nav className="glass-panel" style={{color: 'var(--text-primary)', padding: '0 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 75, position: 'sticky', top: 0, zIndex: 100, borderBottom: '1px solid var(--border-muted)', borderRadius: '0 0 24px 24px', margin: '0 10px'}}>
         <div style={{display: 'flex', alignItems: 'center', gap: '50px', height: '100%'}}>
           <Link href="/dashboard" style={{fontSize: 26, fontWeight: 950, color: 'var(--primary)', textDecoration: 'none', letterSpacing: -1.5}}>
-            iMath<span style={{color: '#fff'}}>.</span>
+            H2bmath<span style={{color: '#fff'}}>.</span>
           </Link>
           <div style={{display: 'flex', gap: '30px', fontSize: 14, fontWeight: 700, height: '100%', alignItems: 'center'}}>
              <Link href="/dashboard" style={{color: 'var(--text-secondary)', textDecoration: 'none'}}>Trang chủ</Link>

@@ -33,7 +33,7 @@ export default function Register() {
     <div className="centered-view">
       <div className="auth-form glass-panel floating">
         <h2 className="auth-title">Khởi Tạo Tài Khoản</h2>
-        <p className="auth-subtitle">Sẵn sàng để học tập tại iMath</p>
+        <p className="auth-subtitle">Sẵn sàng để học tập tại H2bmath</p>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">

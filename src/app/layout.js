@@ -2,6 +2,7 @@ import { Nunito } from 'next/font/google';
 import './globals.css';
 import ChatBubble from './components/ChatBubble';
 import ThemeManager from './components/ThemeManager';
+import Script from 'next/script';
 
 const nunito = Nunito({
   subsets: ['latin', 'vietnamese'],
@@ -19,7 +20,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning className={nunito.variable}>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: `
+        <Script id="theme-loader" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: `
           (function() {
             try {
               const theme = localStorage.getItem('theme');

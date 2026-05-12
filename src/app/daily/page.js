@@ -15,14 +15,14 @@ export default function DailyChallengePage() {
 
   useEffect(() => {
     // maybe try to get last grade from localStorage
-    const savedGrade = localStorage.getItem('iMath_DailyGrade');
+    const savedGrade = localStorage.getItem('H2bmath_DailyGrade');
     if (savedGrade) setGrade(savedGrade);
   }, []);
 
   const fetchDailyQuiz = async (selectedGrade) => {
     setLoading(true);
     setGrade(selectedGrade);
-    localStorage.setItem('iMath_DailyGrade', selectedGrade);
+    localStorage.setItem('H2bmath_DailyGrade', selectedGrade);
     
     const res = await fetch(`/api/daily-quiz?grade=${selectedGrade}`);
     if (res.ok) {

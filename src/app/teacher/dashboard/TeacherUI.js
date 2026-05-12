@@ -149,7 +149,7 @@ export default function TeacherUI({ userId }) {
     { id: 'events', label: 'Lịch dạy', icon: '📅' },
     { id: 'documents', label: 'Tài liệu', icon: '📂' },
     { id: 'grades', label: 'Bảng điểm', icon: '🏆' },
-    { id: 'studio', label: 'iMath Studio', icon: '🕹️', link: '/studio' },
+    { id: 'studio', label: 'H2bmath Studio', icon: '🕹️', link: '/studio' },
     { id: 'messages', label: 'Tin nhắn', icon: '💬', link: '/messages', badge: parentUnread }
   ];
 

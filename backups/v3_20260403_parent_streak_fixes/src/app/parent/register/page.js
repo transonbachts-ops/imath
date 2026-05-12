@@ -44,7 +44,7 @@ export default function ParentRegisterPage() {
         {/* LOGO */}
         <div style={{ textAlign: 'center', marginBottom: 35 }}>
           <div style={{ fontSize: 32, fontWeight: 900, color: '#003380', letterSpacing: -1.5 }}>
-            iMath<span style={{ color: '#cc0000' }}>.</span>
+            H2bmath<span style={{ color: '#cc0000' }}>.</span>
           </div>
           <div style={{ color: '#666', fontSize: 13, marginTop: 5, fontWeight: 600 }}>
             Cổng Phụ Huynh

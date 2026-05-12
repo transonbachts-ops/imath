@@ -3,9 +3,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 
-const GEMINI_API_KEY = 'AIzaSyAjgdesoQDqWN3HMW26l34kXull0SUvEBs';
-const OPENAI_API_KEY = 'sk-9f370baa1366bfe3f73951334c3ecdcada536381c5dbccb1079eb0d8ea14e44d';
-const CLAUDE_API_KEY = 'sk-5c6b297c749b46ad90d9a2ebfd03a18b0ba02613e07d68d87e99ddafa9847dc9';
+const UNIVERSAL_API_KEY = 'sk-9f370baa1366bfe3f73951334c3ecdcada536381c5dbccb1079eb0d8ea14e44d';
 const JWT_SECRET = 'supersecret_smart_edu_key_999';
 
 export async function POST(req) {
@@ -90,7 +88,7 @@ export async function POST(req) {
     // ============================================================
     // BUILD SYSTEM PROMPT với dữ liệu phong phú
     // ============================================================
-    const systemPrompt = `Bạn là Chuyên gia Tư vấn Giáo dục iMath (AI Consultant).
+    const systemPrompt = `Bạn là Chuyên gia Tư vấn Giáo dục H2bmath (AI Consultant).
 Nhiệm vụ: Phân tích dữ liệu học tập và tư vấn sư phạm cho Giáo viên/Quản trị viên.
 Phản hồi bằng Tiếng Việt, trình bày rõ ràng, có đầu mục khi cần.
 
@@ -130,22 +128,24 @@ Nếu không có dữ liệu đủ, hãy nói rõ.`;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 60000);
 
-    // Helper: Gọi Gemini trực tiếp (luôn ổn định, không qua proxy)
+    // Helper: Gọi Gemini qua proxy chung
     const callGemini = async (signal) => {
-      const contents = [
-        { role: 'user', parts: [{ text: systemPrompt }] },
-        { role: 'model', parts: [{ text: 'Đã rõ. Tôi có đầy đủ dữ liệu và sẵn sàng hỗ trợ bạn phân tích chi tiết.' }] },
-        ...history.map(m => ({ role: (m.role === 'user' ? 'user' : 'model'), parts: [{ text: m.content }] })),
-        { role: 'user', parts: [{ text: message }] }
+      const msgs = [
+        { role: 'system', content: systemPrompt },
+        { role: 'assistant', content: 'Đã rõ. Tôi có đầy đủ dữ liệu và sẵn sàng hỗ trợ bạn phân tích chi tiết.' },
+        ...history.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content })),
+        { role: 'user', content: message }
       ];
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents }),
-        signal
-      });
-      const data = await res.json();
-      if (res.ok && data.candidates) return data.candidates[0].content.parts[0].text;
+      try {
+        const res = await fetch('https://llm.chiasegpu.vn/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${UNIVERSAL_API_KEY}` },
+          body: JSON.stringify({ model: 'deepseek-v4-pro', messages: msgs }),
+          signal
+        });
+        const data = await res.json();
+        if (res.ok && data.choices?.[0]?.message?.content) return data.choices[0].message.content;
+      } catch (e) { if (e.name === 'AbortError') throw e; }
       return null;
     };
 
@@ -154,14 +154,13 @@ Nếu không có dữ liệu đủ, hãy nói rõ.`;
     try {
       if (bot === 'openai' || bot === 'claude') {
         // Thử proxy trước
-        const proxyModel = bot === 'openai' ? 'llama3.2:3b' : 'claude-sonnet-4.6';
-        const proxyKey  = bot === 'openai' ? OPENAI_API_KEY : CLAUDE_API_KEY;
+        const proxyModel = 'deepseek-v4-pro';
         try {
           const proxyCtrl = new AbortController();
           const proxyTimeout = setTimeout(() => proxyCtrl.abort(), 20000); // 20s cho proxy
           const response = await fetch('https://llm.chiasegpu.vn/v1/chat/completions', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${proxyKey}` },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${UNIVERSAL_API_KEY}` },
             body: JSON.stringify({
               model: proxyModel,
               messages: [
@@ -202,7 +201,7 @@ Nếu không có dữ liệu đủ, hãy nói rõ.`;
 
       // Nếu dùng fallback, thêm chú thích nhỏ cuối tin nhắn
       if (usedFallback && (bot === 'openai' || bot === 'claude')) {
-        aiText += `\n\n*(Lưu ý: Mô hình ${bot === 'openai' ? 'GPT/Llama' : 'Claude'} tạm thời không khả dụng. Phản hồi được cung cấp bởi Gemini.)*`;
+        aiText += `\n\n*(Lưu ý: Mô hình ${bot === 'openai' ? 'GPT/Llama' : 'Claude'} tạm thời không khả dụng. Phản hồi được cung cấp bởi DeepSeek.)*`;
       }
 
       return NextResponse.json({ reply: aiText });

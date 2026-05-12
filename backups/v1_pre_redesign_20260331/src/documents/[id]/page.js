@@ -56,7 +56,7 @@ export default async function DocumentViewer({ params }) {
       <nav style={{background: '#003380', color: '#fff', padding: '0 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', height: 75, position: 'sticky', top: 0, zIndex: 50}}>
         <div style={{display: 'flex', alignItems: 'center', gap: '50px', height: '100%'}}>
           <Link href="/dashboard" style={{fontSize: 26, fontWeight: 900, color: '#fff', textDecoration: 'none', letterSpacing: -1}}>
-            iMath<span style={{color: '#cc0000'}}>.</span>
+            H2bmath<span style={{color: '#cc0000'}}>.</span>
           </Link>
           <div style={{display: 'flex', gap: '30px', fontSize: 15, fontWeight: 'bold', height: '100%', alignItems: 'center'}}>
              <Link href="/dashboard" style={{color: '#fff', textDecoration: 'none'}}>Trang chủ</Link>

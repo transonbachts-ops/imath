@@ -1,8 +1,8 @@
 @echo off
-title iMath - Smart Edu Server
+title H2bmath - Smart Edu Server
 echo.
 echo  ========================================
-echo   iMath Smart Edu - Starting Dev Server
+echo   H2bmath Smart Edu - Starting Dev Server
 echo  ========================================
 echo.
 echo  [1/2] Checking MySQL (Laragon)...

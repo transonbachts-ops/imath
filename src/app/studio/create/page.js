@@ -151,7 +151,7 @@ function CreateGame() {
       <div style={{ minHeight: '100vh', background: '#f5f7f9', fontFamily: 'Inter, sans-serif' }}>
          <header style={{ background: '#1e293b', padding: '15px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
             <div style={{ color: '#fff', fontSize: '24px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 10 }}>
-               <span style={{ fontSize: '28px' }}>🕹️</span> iMath Studio
+               <span style={{ fontSize: '28px' }}>🕹️</span> H2bmath Studio
             </div>
             <Link href="/studio" style={{ color: '#94a3b8', textDecoration: 'none', background: 'rgba(255,255,255,0.1)', padding: '8px 15px', borderRadius: 8 }}>Trở về Sảnh Studio</Link>
          </header>

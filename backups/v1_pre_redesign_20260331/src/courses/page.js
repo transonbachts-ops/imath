@@ -20,7 +20,7 @@ export default async function CoursesPage() {
       <nav style={{background: '#003380', color: '#fff', padding: '0 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', height: 75, position: 'sticky', top: 0, zIndex: 50}}>
         <div style={{display: 'flex', alignItems: 'center', gap: '50px', height: '100%'}}>
           <Link href="/dashboard" style={{fontSize: 26, fontWeight: 900, color: '#fff', textDecoration: 'none', letterSpacing: -1}}>
-            iMath<span style={{color: '#ff6b6b'}}>.</span>
+            H2bmath<span style={{color: '#ff6b6b'}}>.</span>
           </Link>
           <div style={{display: 'flex', gap: '30px', fontSize: 15, fontWeight: 'bold', height: '100%', alignItems: 'center'}}>
              <Link href="/dashboard" style={{color: '#ccd9f0', textDecoration: 'none'}}>Trang chủ</Link>
@@ -37,7 +37,7 @@ export default async function CoursesPage() {
       <div style={{maxWidth: 1100, margin: '40px auto', padding: '0 20px'}}>
         <div style={{background: 'linear-gradient(135deg, #003380 0%, #0050c8 100%)', borderRadius: 16, padding: '40px 50px', color: '#fff', marginBottom: 40}}>
           <h1 style={{fontSize: 36, fontWeight: 900, margin: '0 0 10px 0', color: '#ffffff'}}>📚 Danh sách Khóa học</h1>
-          <p style={{color: '#c5d8ff', fontSize: 16, margin: 0}}>Tất cả các khóa học hiện hành của iMath — Tìm khóa học phù hợp với bạn.</p>
+          <p style={{color: '#c5d8ff', fontSize: 16, margin: 0}}>Tất cả các khóa học hiện hành của H2bmath — Tìm khóa học phù hợp với bạn.</p>
         </div>
 
         <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 30}}>

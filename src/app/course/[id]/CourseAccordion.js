@@ -199,9 +199,9 @@ export default function CourseAccordion({
                     {teacher.avatar_url ? <img src={teacher.avatar_url} style={imgStyle} alt="T" /> : (teacher.name ? teacher.name[0] : 'T')}
                  </div>
                  <div>
-                    <h4 style={{margin: '0 0 5px 0', fontSize: 18, color: '#003380', fontWeight: 800}}>{teacher.name || 'Ban Chuyên Môn iMath'}</h4>
+                    <h4 style={{margin: '0 0 5px 0', fontSize: 18, color: '#003380', fontWeight: 800}}>{teacher.name || 'Ban Chuyên Môn H2bmath'}</h4>
                     <div style={{color: '#cc0000', fontSize: 13, fontWeight: 700, marginBottom: 10}}>{teacher.role_title}</div>
-                    <p style={{margin: 0, fontSize: 14, color: '#666', lineHeight: 1.5}}>{teacher.bio || 'Giảng viên giàu kinh nghiệm tại iMath.'}</p>
+                    <p style={{margin: 0, fontSize: 14, color: '#666', lineHeight: 1.5}}>{teacher.bio || 'Giảng viên giàu kinh nghiệm tại H2bmath.'}</p>
                  </div>
               </div>
             ) : <NoDataMsg msg="Chưa có thông tin giảng viên." />}

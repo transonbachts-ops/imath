@@ -318,7 +318,7 @@ export default function AdminUI({ userRole = 'admin', userId }) {
       <aside style={{ width: '280px', background: '#1e293b', color: '#fff', padding: '40px 24px', display: 'flex', flexDirection: 'column', position: 'fixed', height: '100vh', zIndex: 100 }}>
         <div style={{ marginBottom: '50px', display: 'flex', alignItems: 'center', gap: '12px' }}>
            <div style={{ width: '40px', height: '40px', background: '#f8fafc', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>⚙️</div>
-           <span style={{ fontSize: '20px', fontWeight: '900', background: 'linear-gradient(to right, #60a5fa, #fff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>iMath Admin</span>
+           <span style={{ fontSize: '20px', fontWeight: '900', background: 'linear-gradient(to right, #60a5fa, #fff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>H2bmath Admin</span>
         </div>
 
         <nav className="no-scrollbar" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', overflowY: 'auto', paddingRight: '5px' }}>
@@ -344,7 +344,7 @@ export default function AdminUI({ userRole = 'admin', userId }) {
               <span>✉️</span> Liên lạc 
               {parentUnread > 0 && <span style={badgeStyle}>{parentUnread}</span>}
            </Link>
-           <Link href="/studio" target="_blank" style={navLinkStyle(false)}><span>🕹️</span> iMath Studio</Link>
+           <Link href="/studio" target="_blank" style={navLinkStyle(false)}><span>🕹️</span> H2bmath Studio</Link>
         </nav>
 
         <Link href="/dashboard" style={{ marginTop: 'auto', textAlign: 'center', color: '#94a3b8', textDecoration: 'none', fontSize: '14px', padding: '15px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)' }}>
@@ -408,7 +408,7 @@ export default function AdminUI({ userRole = 'admin', userId }) {
 
           {tab === 'ai-access' && (
             <div style={cardStyle}>
-              <h3 style={cardTitleStyle}>🤖 Phân Quyền iMath AI</h3>
+              <h3 style={cardTitleStyle}>🤖 Phân Quyền H2bmath AI</h3>
               <table style={tableStyle}>
                 <thead style={theadStyle}>
                   <tr>

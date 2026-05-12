@@ -280,7 +280,7 @@ export default function AdminUI({ userRole = 'admin', userId }) {
         {/* TITLE BAR */}
         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20}}>
           <h2 style={{fontSize: 32, fontWeight: 900}}>
-            <span style={{color: '#003380'}}>iMath</span> Cổng Quản Trị Tối Cao
+            <span style={{color: '#003380'}}>H2bmath</span> Cổng Quản Trị Tối Cao
           </h2>
           <Link href="/dashboard" style={{padding: '10px 25px', background: '#eee', borderRadius: 8, color: '#333', textDecoration: 'none', fontWeight: 'bold'}}>← Rời Khỏi Vùng Quản Trị</Link>
         </div>
@@ -343,7 +343,7 @@ export default function AdminUI({ userRole = 'admin', userId }) {
         {/* TAB: AI ACCESS */}
         {tab === 'ai-access' && (
           <div style={{background: '#ffffff', padding: 30, borderRadius: 20, boxShadow: '0 10px 30px rgba(0,0,0,0.05)'}}>
-            <h3 style={{marginBottom: 25, fontSize: 22, color: '#333'}}>🤖 Phân Quyền Sử Dụng iMath AI Chatbot</h3>
+            <h3 style={{marginBottom: 25, fontSize: 22, color: '#333'}}>🤖 Phân Quyền Sử Dụng H2bmath AI Chatbot</h3>
             <table style={{width: '100%', borderCollapse: 'collapse', fontSize: 15}}>
               <thead>
                 <tr style={{borderBottom: '3px solid #eee', textAlign: 'left', color: '#777'}}>

@@ -101,7 +101,7 @@ export default function TeacherUI({ userId }) {
         {/* TITLE BAR */}
         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20}}>
           <h2 style={{fontSize: 32, fontWeight: 900}}>
-            <span style={{color: '#003380'}}>iMath</span> Khu Vực Giảng Viên
+            <span style={{color: '#003380'}}>H2bmath</span> Khu Vực Giảng Viên
           </h2>
           <div style={{display: 'flex', gap: 12, alignItems: 'center'}}>
             <Link href="/messages" style={{background: '#003380', color: '#fff', padding: '10px 20px', borderRadius: 8, fontWeight: 700, fontSize: 14, display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none'}}>

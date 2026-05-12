@@ -45,7 +45,7 @@ export default function ParentLoginPage() {
         {/* TOP BADGE */}
         <div style={{ marginBottom: 30 }}>
           <div style={{ fontSize: 34, fontWeight: 900, color: '#fff', letterSpacing: -1.5 }}>
-            iMath<span style={{ color: '#cc0000' }}>.</span>
+            H2bmath<span style={{ color: '#cc0000' }}>.</span>
           </div>
           <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14, marginTop: 5 }}>
             Cổng theo dõi dành cho Phụ Huynh

@@ -69,7 +69,7 @@ export default async function CoursePage({ params }) {
       <nav style={{background: '#003380', color: '#fff', padding: '0 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', height: 75, position: 'sticky', top: 0, zIndex: 50}}>
         <div style={{display: 'flex', alignItems: 'center', gap: '50px', height: '100%'}}>
           <Link href="/dashboard" style={{fontSize: 26, fontWeight: 900, color: '#fff', textDecoration: 'none', letterSpacing: -1}}>
-            iMath<span style={{color: '#cc0000'}}>.</span>
+            H2bmath<span style={{color: '#cc0000'}}>.</span>
           </Link>
           <div style={{display: 'flex', gap: '30px', fontSize: 15, fontWeight: 'bold', height: '100%', alignItems: 'center'}}>
              <Link href="/dashboard" style={{color: '#fff', textDecoration: 'none'}}>Trang chủ</Link>
@@ -94,7 +94,7 @@ export default async function CoursePage({ params }) {
          
          <div style={{display: 'flex', gap: 40, alignItems: 'flex-start', marginBottom: 20}}>
             <div style={{flex: '1'}}>
-               <p style={{color: '#666', fontSize: 13, fontWeight: 'bold', textTransform: 'uppercase', marginBottom: 10}}>Khóa học Do iMath Tổ Chức</p>
+               <p style={{color: '#666', fontSize: 13, fontWeight: 'bold', textTransform: 'uppercase', marginBottom: 10}}>Khóa học Do H2bmath Tổ Chức</p>
                <h1 style={{fontSize: 34, color: '#cc0000', fontWeight: 900, lineHeight: 1.2, marginBottom: 20}}>{course.title}</h1>
                <p style={{color: '#444', lineHeight: 1.7, fontSize: 16}}>{course.description}</p>
                {teacher && (
@@ -167,7 +167,7 @@ export default async function CoursePage({ params }) {
                
                {/* MOCK EXTRA CARDS TO FILL CAROUSEL */}
                <div style={{width: 220, flexShrink: 0, border: '1px solid #eee', borderRadius: 6, overflow: 'hidden'}}>
-                  <div style={{height: 120, backgroundImage: `url(https://placehold.co/400x200?text=iMath+Pro)`, backgroundSize: 'cover', backgroundPosition: 'center'}}></div>
+                  <div style={{height: 120, backgroundImage: `url(https://placehold.co/400x200?text=H2bmath+Pro)`, backgroundSize: 'cover', backgroundPosition: 'center'}}></div>
                   <div style={{padding: 15}}>
                      <h4 style={{fontSize: 15, color: '#333', fontWeight: 700, marginBottom: 10, lineHeight: 1.3}}>Chuyên mục Ôn kiến thức</h4>
                      <div style={{display: 'flex', gap: 5}}><span style={{border: '1px solid #ddd', color: '#888', fontSize: 10, padding: '2px 6px'}}>Tư duy</span></div>

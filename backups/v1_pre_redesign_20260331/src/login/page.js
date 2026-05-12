@@ -37,7 +37,7 @@ export default function LoginPage() {
 
       <div className="auth-form glass-panel floating" style={{zIndex: 10, position: 'relative'}}>
         <h1 style={{fontSize: '36px', marginBottom: '5px', textAlign: 'center', background: 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 800}}>
-          iMath
+          H2bmath
         </h1>
         <h2 className="auth-title" style={{fontSize: '24px'}}>Chào Mừng Trở Lại</h2>
         <p className="auth-subtitle">Đăng nhập để tiếp tục lộ trình học tập</p>

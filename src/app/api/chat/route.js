@@ -3,9 +3,7 @@ import jwt from 'jsonwebtoken';
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
-const GEMINI_API_KEY = 'AIzaSyAjgdesoQDqWN3HMW26l34kXull0SUvEBs';
-const OPENAI_API_KEY = 'sk-9f370baa1366bfe3f73951334c3ecdcada536381c5dbccb1079eb0d8ea14e44d';
-const CLAUDE_API_KEY = 'sk-5c6b297c749b46ad90d9a2ebfd03a18b0ba02613e07d68d87e99ddafa9847dc9';
+const UNIVERSAL_API_KEY = 'sk-9f370baa1366bfe3f73951334c3ecdcada536381c5dbccb1079eb0d8ea14e44d';
 const JWT_SECRET = 'supersecret_smart_edu_key_999';
 
 export async function GET(req) {
@@ -70,7 +68,7 @@ export async function POST(req) {
     const listGames = minigamesResult.map(g => `${g.title} (${g.game_type})`).join('; ');
     const listDocs = docsResult.map(d => typeof d.title === 'string' ? d.title : 'Doc').join(', ');
 
-    let systemContext = `Bạn là một trợ lý ảo tư vấn học tập thông minh (AI Chatbot) được tích hợp trong nền tảng học Toán trực tuyến iMath. Tên của bạn là iMath AI. 
+    let systemContext = `Bạn là một trợ lý ảo tư vấn học tập thông minh (AI Chatbot) được tích hợp trong nền tảng học Toán trực tuyến H2bmath. Tên của bạn là H2bmath AI. 
 Người bạn đang nói chuyện là ${user.full_name} (${user.role === 'student' ? 'Học sinh' : 'Giáo/Nhân viên'}). Hãy trả lời một cách tự nhiên, thân thiện, và xưng hô phù hợp.
 
 # BẢN ĐỒ TRUY XUẤT DỮ LIỆU HỆ THỐNG IMATH (Được cấp quyền RAG TOÀN DIỆN)
@@ -236,25 +234,51 @@ Dưới đây là DỮ LIỆU THẬT đang có trên Website. Hãy dùng thông 
       }
     };
 
-    // Helper: Gọi Gemini trực tiếp (không qua proxy, luôn ổn định)
+    // Helper: Gọi OpenClaw (chạy trên laptop cục bộ)
+    const callOpenClaw = async (msgs, signal) => {
+      try {
+        const openClawUrl = 'http://127.0.0.1:18789/v1/chat/completions'; 
+        
+        const res = await fetch(openClawUrl, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer 5db77e802d67b87adac923ea3d53c7f0ecbc3c71f62cd846'
+          },
+          body: JSON.stringify({ 
+            model: 'openclaw', // OpenClaw tự map với agent nội bộ
+            messages: msgs 
+          }),
+          signal
+        });
+        
+        const text = await res.text();
+        if (!res.ok) {
+          console.warn(`OpenClaw lỗi ${res.status}:`, text.substring(0, 100));
+          return null;
+        }
+        const data = JSON.parse(text);
+        
+        // Trả về text. Giả định OpenClaw dùng chuẩn output giống OpenAI
+        return data?.choices?.[0]?.message?.content || null;
+      } catch (e) {
+        console.warn('OpenClaw fail:', e.message);
+        return null;
+      }
+    };
+
+    // Helper: Gọi Gemini qua proxy chung
     const callGemini = async (ctx, hist, msg, signal) => {
-      const geminiModels = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
+      const geminiModels = ['deepseek-v4-pro'];
       for (const modelName of geminiModels) {
         try {
-          const contents = [
-            { role: 'user', parts: [{ text: ctx }] },
-            { role: 'model', parts: [{ text: 'Đã rõ.' }] },
-            ...hist.map(m => ({ role: m.role === 'user' ? 'user' : 'model', parts: [{ text: m.text || m.content || '' }] })),
-            { role: 'user', parts: [{ text: msg }] }
+          const msgs = [
+            { role: 'system', content: ctx },
+            ...hist.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text || m.content || '' })),
+            { role: 'user', content: msg }
           ];
-          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contents }),
-            signal
-          });
-          const data = await res.json();
-          if (res.ok && data.candidates) return data.candidates[0].content.parts[0].text;
+          const text = await callProxy(UNIVERSAL_API_KEY, modelName, msgs, signal);
+          if (text) return text;
         } catch (e) { if (e.name === 'AbortError') throw e; continue; }
       }
       return null;
@@ -272,18 +296,25 @@ Dưới đây là DỮ LIỆU THẬT đang có trên Website. Hãy dùng thông 
         { role: 'user', content: message }
       ];
 
-      if (bot === 'openai') {
-        aiText = await callProxy(OPENAI_API_KEY, 'llama3.2:3b', msgs, controller.signal);
+      if (bot === 'openclaw') {
+        aiText = await callOpenClaw(msgs, controller.signal);
+        if (!aiText) { usedFallback = true; aiText = await callGemini(systemContext, history, message, controller.signal); }
+      } else if (bot === 'openai') {
+        aiText = await callProxy(UNIVERSAL_API_KEY, 'deepseek-v4-pro', msgs, controller.signal);
         if (!aiText) { usedFallback = true; aiText = await callGemini(systemContext, history, message, controller.signal); }
       } else if (bot === 'claude') {
-        aiText = await callProxy(CLAUDE_API_KEY, 'claude-sonnet-4.6', msgs, controller.signal);
+        aiText = await callProxy(UNIVERSAL_API_KEY, 'deepseek-v4-pro', msgs, controller.signal);
         if (!aiText) { usedFallback = true; aiText = await callGemini(systemContext, history, message, controller.signal); }
       } else {
-        aiText = await callGemini(systemContext, history, message, controller.signal);
+        // Mặc định, bạn có thể đổi thành gọi OpenClaw làm mặc định luôn bằng cách:
+        // aiText = await callOpenClaw(msgs, controller.signal);
+        // Nhưng tạm thời vẫn để Gemini nếu bot không phải 'openclaw'
+        aiText = await callOpenClaw(msgs, controller.signal); 
+        if (!aiText) { usedFallback = true; aiText = await callGemini(systemContext, history, message, controller.signal); }
       }
 
       if (!aiText) aiText = 'Dịch vụ AI đang bận, vui lòng thử lại sau.';
-      if (usedFallback) aiText += `\n\n*(Lưu ý: Mô hình ${bot === 'openai' ? 'GPT/Llama' : 'Claude'} tạm thời không khả dụng. Phản hồi bởi Gemini.)*`;
+      if (usedFallback) aiText += `\n\n*(Lưu ý: Mô hình ${bot === 'openai' ? 'GPT/Llama' : 'Claude'} tạm thời không khả dụng. Phản hồi bởi DeepSeek.)*`;
 
       return NextResponse.json({ reply: aiText });
     } catch (error) {

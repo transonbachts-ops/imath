@@ -71,7 +71,7 @@ export default function GamePlayer() {
             <iframe 
                src={gameUrl}
                style={{width: '100%', height: '100%', border: 'none'}}
-               title="iMath Game"
+               title="H2bmath Game"
                allowFullScreen
             />
          ) : (

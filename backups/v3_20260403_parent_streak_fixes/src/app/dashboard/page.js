@@ -124,7 +124,7 @@ export default async function Dashboard({ searchParams }) {
       <nav className="glass-panel" style={{color: 'var(--text-primary)', padding: '0 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 75, position: 'sticky', top: 0, zIndex: 100, borderBottom: '1px solid rgba(255,255,255,0.4)', borderRadius: '0 0 24px 24px', margin: '0 10px'}}>
         <div style={{display: 'flex', alignItems: 'center', gap: '40px', height: '100%'}}>
           <Link href="/dashboard" style={{fontSize: 26, fontWeight: 950, color: 'var(--primary)', textDecoration: 'none', letterSpacing: -1.5}}>
-            iMath<span style={{color: 'var(--secondary)'}}>.</span>
+            H2bmath<span style={{color: 'var(--secondary)'}}>.</span>
           </Link>
           <div style={{display: 'flex', gap: '25px', fontSize: 14, fontWeight: 700, height: '100%', alignItems: 'center'}}>
              <Link href="/" style={{color: 'var(--text-secondary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 5, opacity: 0.7}} title="Về trang chủ">Về trang chủ</Link>
@@ -172,7 +172,7 @@ export default async function Dashboard({ searchParams }) {
         <div style={{background: 'linear-gradient(to right, #f39c12, #e67e22)', borderRadius: 12, padding: '25px 30px', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 35, boxShadow: '0 4px 15px rgba(230, 126, 34, 0.3)'}}>
            <div>
               <h2 style={{margin: '0 0 5px 0', fontSize: 24, fontWeight: 900}}>🔥 Bài Toán Hằng Ngày</h2>
-              <p style={{margin: 0, opacity: 0.9, fontSize: 15, fontWeight: 600}}>Khởi động tư duy mỗi ngày cùng iMath. Bấm vào để làm bài ngay!</p>
+              <p style={{margin: 0, opacity: 0.9, fontSize: 15, fontWeight: 600}}>Khởi động tư duy mỗi ngày cùng H2bmath. Bấm vào để làm bài ngay!</p>
            </div>
            <Link href="/daily" style={{background: '#fff', color: '#d35400', padding: '12px 30px', borderRadius: 8, fontWeight: 800, textDecoration: 'none'}}>Vào Phòng Tập</Link>
         </div>

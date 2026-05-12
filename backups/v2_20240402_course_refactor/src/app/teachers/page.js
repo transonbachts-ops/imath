@@ -10,7 +10,7 @@ export default async function TeachersPage() {
       <div style={{maxWidth: 1200, margin: '0 auto'}}>
         <div style={{textAlign: 'center', marginBottom: 60}}>
           <Link href="/" style={{color: 'var(--primary)', textDecoration: 'none', fontWeight: 800, fontSize: 14, display: 'inline-block', marginBottom: 20}}>← Quay về trang chủ</Link>
-          <h1 style={{fontSize: 48, fontWeight: 950, color: 'var(--text-primary)', marginBottom: 20, letterSpacing: -2}}>Đội Ngũ Giảng Viên iMath</h1>
+          <h1 style={{fontSize: 48, fontWeight: 950, color: 'var(--text-primary)', marginBottom: 20, letterSpacing: -2}}>Đội Ngũ Giảng Viên H2bmath</h1>
           <p style={{fontSize: 18, color: 'var(--text-secondary)', maxWidth: 700, margin: '0 auto'}}>Những người thầy, người cô tận tâm luôn đồng hành cùng bạn trên con đường chinh phục đỉnh cao tri thức.</p>
         </div>
 

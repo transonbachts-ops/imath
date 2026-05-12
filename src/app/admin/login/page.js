@@ -37,7 +37,7 @@ export default function AdminLogin() {
     <div className="centered-view" style={{background: '#1a252f', color: '#fff'}}>
       <div className="auth-form glass-panel floating" style={{background: 'rgba(0,0,0,0.5)', borderColor: '#333'}}>
         <h2 className="auth-title" style={{color: '#e74c3c', textShadow: 'none'}}>Cửa Quản Trị Hệ Thống</h2>
-        <p className="auth-subtitle" style={{color: '#999'}}>Dành riêng cho iMath Administrators</p>
+        <p className="auth-subtitle" style={{color: '#999'}}>Dành riêng cho H2bmath Administrators</p>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">

@@ -52,7 +52,7 @@ export default async function ParentCoursePage({ params }) {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           <span style={{ fontSize: 24, fontWeight: 900, letterSpacing: -1, color: '#fff' }}>
-            iMath<span style={{ color: '#fff' }}>.</span>
+            H2bmath<span style={{ color: '#fff' }}>.</span>
           </span>
           <span style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', fontSize: 11, padding: '3px 10px', borderRadius: 20, fontWeight: 700, letterSpacing: 1 }}>
             PHỤ HUYNH

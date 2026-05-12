@@ -94,7 +94,7 @@ export default async function CourseLearnPage({ params }) {
       <div style={{width: 290, flexShrink: 0, background: '#fff', borderRight: '1px solid #e0e0e0', display: 'flex', flexDirection: 'column', position: 'sticky', top: 0, height: '100vh', overflowY: 'auto'}}>
          <div style={{padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 10, borderBottom: '1px solid #eee', background: '#003380'}}>
             <Link href="/dashboard" style={{fontWeight: 900, color: '#fff', fontSize: 22, textDecoration: 'none', letterSpacing: -1}}>
-               iMath<span style={{color: '#ff6b6b'}}>.</span>
+               H2bmath<span style={{color: '#ff6b6b'}}>.</span>
             </Link>
          </div>
          

@@ -105,7 +105,7 @@ export default function AnalyticsAI({ analytics }) {
              <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                 <div style={{ width: '45px', height: '45px', background: 'linear-gradient(45deg, #3b82f6, #8b5cf6)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>🤖</div>
                 <div>
-                   <h4 style={{ color: '#1e293b', fontSize: '20px', fontWeight: '900', margin: 0 }}>Cố vấn AI iMath</h4>
+                   <h4 style={{ color: '#1e293b', fontSize: '20px', fontWeight: '900', margin: 0 }}>Cố vấn AI H2bmath</h4>
                    <span style={{ color: '#64748b', fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase' }}>Ai của mọi nhà</span>
                 </div>
              </div>
@@ -138,7 +138,7 @@ export default function AnalyticsAI({ analytics }) {
                 {history.length === 0 ? (
                    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                       <div style={{ width: '64px', height: '64px', background: '#ffffff', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', marginBottom: '25px', boxShadow: '0 8px 25px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0' }}>🎓</div>
-                      <h3 style={{ color: '#1e293b', fontSize: '22px', fontWeight: '900', marginBottom: '10px' }}>Trung tâm Cố vấn iMath</h3>
+                      <h3 style={{ color: '#1e293b', fontSize: '22px', fontWeight: '900', marginBottom: '10px' }}>Trung tâm Cố vấn H2bmath</h3>
                       <p style={{ color: '#64748b', fontSize: '15px', maxWidth: '400px', textAlign: 'center', lineHeight: 1.6 }}>Chào mừng bạn. Hãy đặt câu hỏi để nhận được những phân tích dữ liệu và lời khuyên dạy học chuyên sâu.</p>
                    </div>
                 ) : (

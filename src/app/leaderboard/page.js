@@ -24,7 +24,7 @@ export default function LeaderboardPage() {
          <div style={{background: 'linear-gradient(to right, #f39c12, #e67e22)', padding: 40, textAlign: 'center', color: '#fff'}}>
             <div style={{fontSize: 60, marginBottom: 10, animation: 'pulse 2s infinite'}}>🏆</div>
             <h1 style={{margin: 0, fontWeight: 900, fontSize: 32}}>Bảng Vàng Chuyên Cần</h1>
-            <p style={{margin: '10px 0 0', opacity: 0.9, fontSize: 16}}>Tôn vinh những tinh thần học tập rực cháy nhất iMath</p>
+            <p style={{margin: '10px 0 0', opacity: 0.9, fontSize: 16}}>Tôn vinh những tinh thần học tập rực cháy nhất H2bmath</p>
          </div>
 
          <div style={{padding: 40}}>

@@ -1,5 +1,5 @@
 @echo off
-title iMath - PRODUCTION SERVER
+title H2bmath - PRODUCTION SERVER
 SET "NODE_PATH=C:\laragon\bin\nodejs\node-v22"
 SET "PATH=%NODE_PATH%;%PATH%"
 cd /d "%~dp0"

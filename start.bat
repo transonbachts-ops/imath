@@ -1,8 +1,8 @@
 @echo off
-title iMath - Smart Edu ONLINE Server
+title H2bmath - Smart Edu ONLINE Server
 echo.
 echo  ========================================
-echo   iMath - KICH HOAT CHE DO ONLINE
+echo   H2bmath - KICH HOAT CHE DO ONLINE
 echo  ========================================
 echo.
 
@@ -30,7 +30,7 @@ if %ERRORLEVEL% NEQ 0 (
 echo  [3/3] Dang khoi tao Web Server...
 cd /d "%~dp0"
 taskkill /F /IM node.exe /T 2>nul
-start "iMath-Web-Server" /min cmd /c "npm run dev"
+start "H2bmath-Web-Server" /min cmd /c "npm run dev"
 
 echo.
 echo  Dang khoi tao server (Vui long cho 5-10 giay)...

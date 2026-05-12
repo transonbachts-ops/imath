@@ -57,7 +57,7 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Bạn chưa được cấp quyền sử dụng AI Chatbot.' }, { status: 403 });
     }
 
-    let systemContext = `Bạn là một trợ lý ảo tư vấn học tập thông minh (AI Chatbot) được tích hợp trong nền tảng học Toán trực tuyến iMath. Tên của bạn là iMath AI. 
+    let systemContext = `Bạn là một trợ lý ảo tư vấn học tập thông minh (AI Chatbot) được tích hợp trong nền tảng học Toán trực tuyến H2bmath. Tên của bạn là H2bmath AI. 
 Người bạn đang nói chuyện là ${user.full_name} (${user.role === 'student' ? 'Học sinh' : 'Giáo viên'}). Hãy trả lời một cách tự nhiên, thân thiện, và xưng hô phù hợp.\n\n`;
 
     if (user.role === 'student') {

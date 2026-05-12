@@ -46,7 +46,7 @@ export default async function DocumentsPage({ searchParams }) {
       <nav style={{background: '#003380', color: '#fff', padding: '0 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', height: 75, position: 'sticky', top: 0, zIndex: 50}}>
         <div style={{display: 'flex', alignItems: 'center', gap: '50px', height: '100%'}}>
           <Link href="/dashboard" style={{fontSize: 26, fontWeight: 900, color: '#fff', textDecoration: 'none', letterSpacing: -1}}>
-            iMath<span style={{color: '#cc0000'}}>.</span>
+            H2bmath<span style={{color: '#cc0000'}}>.</span>
           </Link>
           <div style={{display: 'flex', gap: '30px', fontSize: 15, fontWeight: 'bold', height: '100%', alignItems: 'center'}}>
              <Link href="/dashboard" style={{color: '#fff', textDecoration: 'none'}}>Trang chủ</Link>
@@ -73,7 +73,7 @@ export default async function DocumentsPage({ searchParams }) {
       {/* DOCUMENT GRID OVERVIEW */}
       <div className="container" style={{maxWidth: 1100, margin: '0 auto', textAlign: 'center', marginTop: 60}}>
         <h1 style={{fontSize: '32px', marginBottom: '50px', color: '#003380', fontWeight: 900}}>
-          {query ? `Kết quả tìm kiếm cho: "${query}"` : 'Tủ Sách & Ấn Phẩm Tài Liệu iMath'}
+          {query ? `Kết quả tìm kiếm cho: "${query}"` : 'Tủ Sách & Ấn Phẩm Tài Liệu H2bmath'}
         </h1>
         
         <div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '30px', textAlign: 'left'}}>
@@ -85,7 +85,7 @@ export default async function DocumentsPage({ searchParams }) {
                   <div style={{background: '#e0e0e0', height: '220px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888'}}>Không Có Bìa</div>
                 )}
                 <div style={{padding: '30px 25px', display: 'flex', flexDirection: 'column', flexGrow: 1}}>
-                  <p style={{color: '#e74c3c', fontSize: 13, marginBottom: 8, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 1}}>Tạp Chí iMath</p>
+                  <p style={{color: '#e74c3c', fontSize: 13, marginBottom: 8, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 1}}>Tạp Chí H2bmath</p>
                   <h3 style={{marginBottom: '15px', color: '#2c3e50', fontSize: '24px', fontWeight: 800, lineHeight: 1.3}}>{d.title}</h3>
                   <p style={{color: '#666', fontSize: '15px', marginBottom: '30px', flexGrow: 1, lineHeight: '1.7'}}>{d.introduction ? (d.introduction.substring(0, 80) + '...') : ''}</p>
                   

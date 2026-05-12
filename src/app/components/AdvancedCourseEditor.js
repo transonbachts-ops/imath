@@ -622,7 +622,7 @@ export default function AdvancedCourseEditor({ courseId }) {
                        🎮 Tích hợp Mini-game
                     </h4>
                     <p style={{fontSize: 13, color: '#64748b', marginBottom: 15, lineHeight: 1.5}}>
-                       Để tạo mới và cấu hình một trò chơi, vui lòng sử dụng <a href="/studio" target="_blank" style={{color: '#3b82f6', fontWeight: 'bold', textDecoration: 'none'}}>iMath Studio</a>. Sau đó dán <b>Mã Game (Game Code)</b> vào ô bên dưới.
+                       Để tạo mới và cấu hình một trò chơi, vui lòng sử dụng <a href="/studio" target="_blank" style={{color: '#3b82f6', fontWeight: 'bold', textDecoration: 'none'}}>H2bmath Studio</a>. Sau đó dán <b>Mã Game (Game Code)</b> vào ô bên dưới.
                     </p>
                     <label style={{fontWeight: 'bold'}}>Mã Game (Game Code)</label>
                     <input 

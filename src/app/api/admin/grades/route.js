@@ -52,7 +52,7 @@ export async function GET(req) {
         u.full_name as student_name,
         u.email as student_email,
         p.title as activity_name,
-        'iMath Studio' as course_name,
+        'H2bmath Studio' as course_name,
         s.score,
         s.created_at as submitted_at,
         'studio' as type

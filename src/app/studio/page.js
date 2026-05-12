@@ -125,7 +125,7 @@ export default function StudioDashboard() {
       <aside style={{ width: '280px', background: '#1e293b', color: '#fff', padding: '30px 20px', display: 'flex', flexDirection: 'column' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: '40px', padding: '0 10px' }}>
           <span style={{ fontSize: '30px' }}>🕹️</span>
-          <span style={{ fontSize: '20px', fontWeight: '900', letterSpacing: '0.5px', background: 'linear-gradient(to right, #60a5fa, #fff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>iMath Studio</span>
+          <span style={{ fontSize: '20px', fontWeight: '900', letterSpacing: '0.5px', background: 'linear-gradient(to right, #60a5fa, #fff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>H2bmath Studio</span>
         </div>
 
         <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
